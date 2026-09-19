@@ -1,0 +1,133 @@
+"""
+Phase 2: Retrieve + generate pipeline.
+
+Given a question:
+  1. Embed it with the same local Ollama embedding model used to build the index.
+  2. Retrieve the top-k most similar chunks from FAISS.
+  3. Ask a local Ollama chat model to answer using ONLY those chunks, citing
+     which chunk(s) it used.
+
+Usage (from the command line):
+    python src/rag.py "What is the default timeout for a Lambda function?"
+"""
+
+import sys
+import re
+from pathlib import Path
+from dataclasses import dataclass, field
+
+from langchain_ollama import OllamaEmbeddings, ChatOllama
+from langchain_community.vectorstores import FAISS
+from langchain_core.documents import Document
+
+INDEX_DIR = Path("faiss_index")
+EMBEDDING_MODEL = "nomic-embed-text"
+GENERATION_MODEL = "llama3.2:3b"
+DEFAULT_K = 4
+
+PROMPT_TEMPLATE = """You are a technical assistant answering questions about AWS Lambda, \
+using ONLY the numbered source excerpts below. Do not use outside knowledge.
+
+If the excerpts don't contain the answer, say "I don't have enough information in the \
+provided sources to answer that."
+
+After your answer, on a new line, list the sources you actually relied on, like:
+Citations: [1], [3]
+
+Sources:
+{context}
+
+Question: {question}
+
+Answer:"""
+
+
+@dataclass
+class RagResult:
+    question: str
+    answer: str
+    cited_chunk_ids: list[str] = field(default_factory=list)
+    retrieved_chunks: list[dict] = field(default_factory=list)
+
+
+def _format_context(docs: list[Document]) -> str:
+    blocks = []
+    for i, d in enumerate(docs, start=1):
+        blocks.append(
+            f"[{i}] (source: {d.metadata['source_doc']}, chunk_id: {d.metadata['chunk_id']})\n"
+            f"{d.page_content}"
+        )
+    return "\n\n".join(blocks)
+
+
+def _parse_citations(answer: str, docs: list[Document]) -> list[str]:
+    """Map bracketed numbers like [1], [3] in the answer back to chunk_ids."""
+    numbers = {int(n) for n in re.findall(r"\[(\d+)\]", answer)}
+    cited = []
+    for i, d in enumerate(docs, start=1):
+        if i in numbers:
+            cited.append(d.metadata["chunk_id"])
+    return cited
+
+
+class RagPipeline:
+    def __init__(
+        self,
+        index_dir: Path = INDEX_DIR,
+        embedding_model: str = EMBEDDING_MODEL,
+        generation_model: str = GENERATION_MODEL,
+        k: int = DEFAULT_K,
+    ):
+        self.embeddings = OllamaEmbeddings(model=embedding_model)
+        self.vectorstore = FAISS.load_local(
+            str(index_dir), self.embeddings, allow_dangerous_deserialization=True
+        )
+        self.llm = ChatOllama(model=generation_model, temperature=0)
+        self.k = k
+
+    def retrieve(self, question: str, k: int | None = None) -> list[Document]:
+        return self.vectorstore.similarity_search(question, k=k or self.k)
+
+    def ask(self, question: str, k: int | None = None) -> RagResult:
+        docs = self.retrieve(question, k=k)
+        context = _format_context(docs)
+        prompt = PROMPT_TEMPLATE.format(context=context, question=question)
+        response = self.llm.invoke(prompt)
+        answer_text = response.content
+
+        cited_ids = _parse_citations(answer_text, docs)
+        retrieved = [
+            {
+                "chunk_id": d.metadata["chunk_id"],
+                "source_doc": d.metadata["source_doc"],
+                "text": d.page_content,
+            }
+            for d in docs
+        ]
+        return RagResult(
+            question=question,
+            answer=answer_text,
+            cited_chunk_ids=cited_ids,
+            retrieved_chunks=retrieved,
+        )
+
+
+def main():
+    if len(sys.argv) < 2:
+        print('Usage: python src/rag.py "your question here"')
+        sys.exit(1)
+
+    question = " ".join(sys.argv[1:])
+    pipeline = RagPipeline()
+    result = pipeline.ask(question)
+
+    print(f"\nQuestion: {result.question}\n")
+    print(f"Answer:\n{result.answer}\n")
+    print("Retrieved chunks:")
+    for c in result.retrieved_chunks:
+        marker = "*" if c["chunk_id"] in result.cited_chunk_ids else " "
+        print(f"  [{marker}] {c['chunk_id']} - {c['source_doc']}")
+
+
+if __name__ == "__main__":
+    main()

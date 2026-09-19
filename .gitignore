@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+.env
+data/raw/*.pdf
+*.faiss
+*.pkl
+faiss_index/
+.DS_Store
+toc_dump.txt
+offset_check.txt
+heading_search*.txt
+offset_map.txt
