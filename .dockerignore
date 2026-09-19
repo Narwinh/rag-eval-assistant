@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+data/raw/
+data/eval/
+results/
+.git/
+.gitignore
+*.log

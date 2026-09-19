@@ -17,12 +17,13 @@ its own answers tends to rate them more favorably than an independent judge
 would. Both run locally via Ollama at zero API cost.
 """
 
-import json
+import os
 import re
 
 from langchain_ollama import ChatOllama
 
 JUDGE_MODEL = "phi3:mini"
+OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
 
 _judge_llm = None
 
@@ -30,7 +31,7 @@ _judge_llm = None
 def get_judge_llm():
     global _judge_llm
     if _judge_llm is None:
-        _judge_llm = ChatOllama(model=JUDGE_MODEL, temperature=0)
+        _judge_llm = ChatOllama(model=JUDGE_MODEL, temperature=0, base_url=OLLAMA_BASE_URL)
     return _judge_llm
 
 

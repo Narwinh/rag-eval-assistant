@@ -11,6 +11,7 @@ Usage (from the command line):
     python src/rag.py "What is the default timeout for a Lambda function?"
 """
 
+import os
 import sys
 import re
 from pathlib import Path
@@ -26,6 +27,10 @@ EMBEDDING_MODEL = "nomic-embed-text"
 GENERATION_MODEL = "llama3.2:3b"
 DEFAULT_K = 4
 RERANK_FETCH_MULTIPLIER = 4  # when reranking, fetch this many x k candidates before rescoring
+
+# Overridable so the same code works against a local `ollama serve` and
+# against an Ollama instance reachable from inside a Docker container.
+OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
 
 PROMPT_TEMPLATE = """You are a technical assistant answering questions about AWS Lambda, \
 using ONLY the numbered source excerpts below. Do not use outside knowledge.
@@ -82,11 +87,11 @@ class RagPipeline:
         k: int = DEFAULT_K,
         rerank: bool = False,
     ):
-        self.embeddings = OllamaEmbeddings(model=embedding_model)
+        self.embeddings = OllamaEmbeddings(model=embedding_model, base_url=OLLAMA_BASE_URL)
         self.vectorstore = FAISS.load_local(
             str(index_dir), self.embeddings, allow_dangerous_deserialization=True
         )
-        self.llm = ChatOllama(model=generation_model, temperature=0)
+        self.llm = ChatOllama(model=generation_model, temperature=0, base_url=OLLAMA_BASE_URL)
         self.k = k
         self.rerank = rerank
 
