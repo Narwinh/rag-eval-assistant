@@ -5,6 +5,7 @@ Guide, using a local Ollama embedding model (zero API cost).
 Run `python src/ingest.py` first to produce data/processed/chunks.json.
 """
 
+import argparse
 import json
 import time
 from pathlib import Path
@@ -47,11 +48,16 @@ def build_index(chunks: list[dict], embedding_model: str = EMBEDDING_MODEL) -> F
 
 
 def main():
-    chunks = load_chunks()
+    parser = argparse.ArgumentParser(description="Build a FAISS index over chunked documents.")
+    parser.add_argument("--chunks", type=Path, default=CHUNKS_PATH, help="Path to chunks.json.")
+    parser.add_argument("--index-dir", type=Path, default=INDEX_DIR, help="Directory to save the FAISS index.")
+    args = parser.parse_args()
+
+    chunks = load_chunks(args.chunks)
     vectorstore = build_index(chunks)
-    INDEX_DIR.mkdir(parents=True, exist_ok=True)
-    vectorstore.save_local(str(INDEX_DIR))
-    print(f"Saved FAISS index to {INDEX_DIR}/")
+    args.index_dir.mkdir(parents=True, exist_ok=True)
+    vectorstore.save_local(str(args.index_dir))
+    print(f"Saved FAISS index to {args.index_dir}/")
 
 
 if __name__ == "__main__":

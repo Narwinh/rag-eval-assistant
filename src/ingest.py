@@ -15,6 +15,7 @@ always `printed_page + PAGE_OFFSET` for this document (verified by
 cross-checking chapter headings against footers).
 """
 
+import argparse
 import json
 import re
 from pathlib import Path
@@ -120,14 +121,14 @@ def extract_section_text(reader: PdfReader, start_page: int, end_page: int) -> t
     return "\n".join(parts), failures
 
 
-def chunk_documents():
+def chunk_documents(chunk_size: int = CHUNK_SIZE_TOKENS, chunk_overlap: int = CHUNK_OVERLAP_TOKENS):
     if not PDF_PATH.exists():
         raise FileNotFoundError(f"Expected source PDF at {PDF_PATH}")
 
     reader = PdfReader(str(PDF_PATH))
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=CHUNK_SIZE_TOKENS,
-        chunk_overlap=CHUNK_OVERLAP_TOKENS,
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
         length_function=_token_len,
         separators=["\n\n", "\n", ". ", " ", ""],
     )
@@ -161,11 +162,17 @@ def chunk_documents():
 
 
 def main():
-    print(f"Loading PDF: {PDF_PATH}")
-    chunks, failures = chunk_documents()
+    parser = argparse.ArgumentParser(description="Ingest and chunk the AWS Lambda Developer Guide.")
+    parser.add_argument("--chunk-size", type=int, default=CHUNK_SIZE_TOKENS, help="Chunk size in tokens.")
+    parser.add_argument("--chunk-overlap", type=int, default=CHUNK_OVERLAP_TOKENS, help="Chunk overlap in tokens.")
+    parser.add_argument("--output", type=Path, default=OUTPUT_PATH, help="Where to write chunks.json.")
+    args = parser.parse_args()
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+    print(f"Loading PDF: {PDF_PATH}")
+    chunks, failures = chunk_documents(chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
+
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    with open(args.output, "w", encoding="utf-8") as f:
         json.dump(chunks, f, indent=2, ensure_ascii=False)
 
     total_pages = sum(end - start + 1 for _, _, start, end in SECTIONS)
@@ -174,6 +181,7 @@ def main():
     print("\n--- Ingest summary ---")
     print(f"Chapters/sections processed : {len(SECTIONS)}")
     print(f"Printed pages covered        : {total_pages}")
+    print(f"Chunk size / overlap (tokens): {args.chunk_size} / {args.chunk_overlap}")
     print(f"Chunks produced               : {len(chunks)}")
     print(f"Average chunk size (tokens)   : {avg_tokens:.1f}")
     print(f"Parsing failures               : {len(failures)}")
@@ -181,7 +189,7 @@ def main():
         print("First few failures:")
         for f_ in failures[:10]:
             print(f"  - {f_}")
-    print(f"Wrote chunks to {OUTPUT_PATH}")
+    print(f"Wrote chunks to {args.output}")
 
 
 if __name__ == "__main__":

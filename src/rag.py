@@ -19,11 +19,13 @@ from dataclasses import dataclass, field
 from langchain_ollama import OllamaEmbeddings, ChatOllama
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
+from rank_bm25 import BM25Okapi
 
 INDEX_DIR = Path("faiss_index")
 EMBEDDING_MODEL = "nomic-embed-text"
 GENERATION_MODEL = "llama3.2:3b"
 DEFAULT_K = 4
+RERANK_FETCH_MULTIPLIER = 4  # when reranking, fetch this many x k candidates before rescoring
 
 PROMPT_TEMPLATE = """You are a technical assistant answering questions about AWS Lambda, \
 using ONLY the numbered source excerpts below. Do not use outside knowledge.
@@ -48,6 +50,7 @@ class RagResult:
     answer: str
     cited_chunk_ids: list[str] = field(default_factory=list)
     retrieved_chunks: list[dict] = field(default_factory=list)
+    confidence: float = 0.0
 
 
 def _format_context(docs: list[Document]) -> str:
@@ -77,6 +80,7 @@ class RagPipeline:
         embedding_model: str = EMBEDDING_MODEL,
         generation_model: str = GENERATION_MODEL,
         k: int = DEFAULT_K,
+        rerank: bool = False,
     ):
         self.embeddings = OllamaEmbeddings(model=embedding_model)
         self.vectorstore = FAISS.load_local(
@@ -84,12 +88,36 @@ class RagPipeline:
         )
         self.llm = ChatOllama(model=generation_model, temperature=0)
         self.k = k
+        self.rerank = rerank
 
     def retrieve(self, question: str, k: int | None = None) -> list[Document]:
-        return self.vectorstore.similarity_search(question, k=k or self.k)
+        k = k or self.k
+        if not self.rerank:
+            return self.vectorstore.similarity_search(question, k=k)
+
+        # Simple lexical re-ranker: over-fetch by embedding similarity, then
+        # re-score with BM25 (term overlap) and keep the top k. This tends to
+        # help on queries with specific technical terms/numbers that
+        # embedding similarity alone can under-weight.
+        candidates = self.vectorstore.similarity_search(question, k=k * RERANK_FETCH_MULTIPLIER)
+        tokenized_corpus = [doc.page_content.lower().split() for doc in candidates]
+        bm25 = BM25Okapi(tokenized_corpus)
+        scores = bm25.get_scores(question.lower().split())
+        ranked = [doc for _, doc in sorted(zip(scores, candidates), key=lambda p: p[0], reverse=True)]
+        return ranked[:k]
 
     def ask(self, question: str, k: int | None = None) -> RagResult:
+        k = k or self.k
         docs = self.retrieve(question, k=k)
+
+        # Confidence proxy: how similar the single best-matching chunk is to
+        # the question, mapped from FAISS's raw L2 distance (lower = closer)
+        # into a 0-1 range via 1 / (1 + distance). This is a heuristic, not a
+        # calibrated probability - it is meant to flag "nothing relevant was
+        # found" cases (low score) rather than to be precise.
+        top_hits = self.vectorstore.similarity_search_with_score(question, k=1)
+        confidence = round(1 / (1 + top_hits[0][1]), 3) if top_hits else 0.0
+
         context = _format_context(docs)
         prompt = PROMPT_TEMPLATE.format(context=context, question=question)
         response = self.llm.invoke(prompt)
@@ -109,6 +137,7 @@ class RagPipeline:
             answer=answer_text,
             cited_chunk_ids=cited_ids,
             retrieved_chunks=retrieved,
+            confidence=confidence,
         )
 
 
