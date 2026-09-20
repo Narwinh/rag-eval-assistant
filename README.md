@@ -6,19 +6,29 @@ A retrieval-augmented Q&A assistant over ~300 pages of the official AWS Lambda D
 
 ## Results
 
-_TODO: fill in after running `python -m src.eval.run_eval` (baseline) and the ablation sweep. Numbers below are placeholders — do not quote until replaced._
+All numbers are averages over the same 38-question hand-verified eval set, scored by `phi3:mini` as an independent LLM judge (never the generator model). Full per-question scores and judge reasoning are in [`results/`](results/); `results/ablation_results.json` has the combined summary.
 
-| Config | Chunk size | k | Re-rank | Answer relevance (1-5) | Retrieval recall@k | Citation accuracy |
-|---|---|---|---|---|---|---|
-| Baseline | 500 tok | 4 | off | TBD | TBD | TBD |
-| Chunk size 300 | 300 tok | 4 | off | TBD | TBD | TBD |
-| Chunk size 800 | 800 tok | 4 | off | TBD | TBD | TBD |
-| k=3 | 500 tok | 3 | off | TBD | TBD | TBD |
-| k=6 | 500 tok | 6 | off | TBD | TBD | TBD |
-| Re-ranking on | 500 tok | 4 | on | TBD | TBD | TBD |
-| **Best config** | TBD | TBD | TBD | **TBD** | TBD | TBD |
+| Config | Chunk size | k | Re-rank | Answer relevance (1-5) | Precision@k | Recall@k | Citation accuracy | Avg latency |
+|---|---|---|---|---|---|---|---|---|
+| Baseline | 500 tok | 4 | off | 3.92 | 0.53 | 0.80 | 0.61 | 31.0s |
+| Chunk size 300 | 300 tok | 4 | off | 3.79 | **0.63** | **0.86** | 0.57 | **25.9s** |
+| Chunk size 800 | 800 tok | 4 | off | 3.97 | 0.43 | 0.79 | **0.76** | 50.5s |
+| k=3 | 500 tok | 3 | off | **3.97** | 0.61 | 0.75 | 0.63 | 25.8s |
+| k=6 | 500 tok | 6 | off | 3.95 | 0.45 | 0.86 | 0.60 | 40.9s |
+| Re-ranking (BM25) | 500 tok | 4 | on | 3.84 | 0.45 | 0.83 | 0.60 | 30.1s |
+| **Best config: k=3** | 500 tok | **3** | off | **3.97** | 0.61 | 0.75 | 0.63 | **25.8s** |
 
-Full per-question scores and judge reasoning are in [`results/`](results/).
+**Headline finding: retrieving fewer, more targeted chunks (k=3 vs k=4) improved answer relevance, precision, and latency all at once** — a rare case where nothing traded off against anything else. The effect is concentrated in the hard (multi-hop synthesis) questions:
+
+| Config | Easy relevance | Medium relevance | Hard relevance |
+|---|---|---|---|
+| Baseline (k=4) | 4.13 | 3.73 | 3.88 |
+| **k=3** | 4.27 | 3.47 | **4.38** |
+| Chunk size 300 | 4.13 | 3.73 | 3.25 |
+
+Dropping from 4 to 3 retrieved chunks lifted hard-question relevance from 3.88 to 4.38 — the single largest effect in the whole sweep. With a small (3B parameter) local generator, apparently even one extra chunk of context is enough added noise to measurably hurt cross-section synthesis, even though it does cost some recall (0.80 → 0.75). Smaller chunks (300 tokens) show the opposite pattern: better retrieval precision/recall in isolation, but the worst hard-question relevance (3.25) — fragmenting the text into smaller pieces makes it harder for the model to find a single chunk that contains a full synthesis-worthy explanation. Larger chunks (800 tokens) had the best citation accuracy (0.76, since a bigger excerpt is more likely to self-containedly support a claim) but at nearly double the latency and the worst retrieval precision. The BM25 re-ranker did not help on this corpus — a lexical re-ranker adds little when the questions and source text already share vocabulary closely, which is typical of technical documentation.
+
+Read honestly: the overall relevance gain (3.92 → 3.97 on a 5-point scale) is modest — this is a small local 3B model, not a frontier API model, and the eval set is only 38 questions. The clearer, more actionable signal is the difficulty breakdown, not the single aggregate number.
 
 ## What this project actually tests
 

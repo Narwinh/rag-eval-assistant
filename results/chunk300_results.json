@@ -1,0 +1,1995 @@
+{
+  "overall": {
+    "n_questions": 38,
+    "avg_precision_at_k": 0.625,
+    "avg_recall_at_k": 0.8552631578947368,
+    "avg_answer_relevance": 3.789473684210526,
+    "avg_citation_accuracy": 0.5723684210526315,
+    "avg_latency_seconds": 25.902368421052632
+  },
+  "by_difficulty": {
+    "easy": {
+      "n_questions": 15,
+      "avg_precision_at_k": 0.4666666666666667,
+      "avg_recall_at_k": 0.8666666666666667,
+      "avg_answer_relevance": 4.133333333333334,
+      "avg_citation_accuracy": 0.5833333333333334
+    },
+    "medium": {
+      "n_questions": 15,
+      "avg_precision_at_k": 0.6666666666666666,
+      "avg_recall_at_k": 0.9333333333333333,
+      "avg_answer_relevance": 3.7333333333333334,
+      "avg_citation_accuracy": 0.6
+    },
+    "hard": {
+      "n_questions": 8,
+      "avg_precision_at_k": 0.84375,
+      "avg_recall_at_k": 0.6875,
+      "avg_answer_relevance": 3.25,
+      "avg_citation_accuracy": 0.5
+    }
+  },
+  "per_question": [
+    {
+      "id": "q001",
+      "question": "Can a single Lambda function have more than one handler?",
+      "difficulty": "easy",
+      "gold_source_doc": "Core concepts > Core concepts overview",
+      "generated_answer": "No, a Lambda function can only have one handler.\n\nCitations: [2]",
+      "ideal_answer": "No. A Lambda function's code can contain more than one method or function, but Lambda functions can only have one handler, which is the entry point that Lambda invokes when the function runs.",
+      "retrieved_sources": [
+        "Core concepts > Core concepts overview",
+        "Create your first function > Create your first function",
+        "Core concepts > Creating event-driven architectures",
+        "Function scaling > Understanding and visualizing concurrency"
+      ],
+      "cited_chunk_ids": [
+        "c0058"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Core concepts > Core concepts overview"
+        ],
+        "retrieved_sources": [
+          "Core concepts > Core concepts overview",
+          "Create your first function > Create your first function",
+          "Core concepts > Creating event-driven architectures",
+          "Function scaling > Understanding and visualizing concurrency"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it directly matches the factual content of the ideal answer, which states that a Lambda function can only have one handler. The assistant's answer is concise and accurate, providing the necessary information without any omissions or inaccuracies.",
+        "raw_judge_output": "SCORE: 5\nREASONING: The assistant's answer is fully correct and complete, as it directly matches the factual content of the ideal answer, which states that a Lambda function can only have one handler. The assistant's answer is concise and accurate, providing the necessary information without any omissions or inaccuracies."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.0,
+        "n_citations": 1,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not provide evidence supporting the claim that a Lambda function can only have one handler; instead, it explains the default handler method and its arguments."
+          }
+        ]
+      },
+      "latency_seconds": 26.64
+    },
+    {
+      "id": "q002",
+      "question": "What is the time limit on the Init phase for a standard Lambda function, and what happens if the runtime and extensions don't finish initializing in time?",
+      "difficulty": "medium",
+      "gold_source_doc": "Core concepts > Running code",
+      "generated_answer": "The time limit on the Init phase for a standard Lambda function is 10 seconds.\n\nIf the runtime and extensions don't finish initializing in time, Lambda retries the Init phase at the time of the first function invocation with the configured function timeout.\n\nSources:\n[1], [3]",
+      "ideal_answer": "The Init phase is limited to 10 seconds. If the extension init, runtime init, and function init tasks don't all complete within that window, Lambda retries the Init phase at the time of the function's first invocation, this time using the configured function timeout instead of the 10-second limit.",
+      "retrieved_sources": [
+        "Core concepts > Running code",
+        "Core concepts > Running code",
+        "Core concepts > Running code",
+        "Core concepts > Running code"
+      ],
+      "cited_chunk_ids": [
+        "c0015",
+        "c0014"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Core concepts > Running code"
+        ],
+        "retrieved_sources": [
+          "Core concepts > Running code",
+          "Core concepts > Running code",
+          "Core concepts > Running code",
+          "Core concepts > Running code"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer fully matches the factual content of the ideal answer, accurately stating the time limit for the Init phase and the correct behavior of Lambda when initialization tasks exceed this limit.",
+        "raw_judge_output": "SCORE: 5\nREASONING: The assistant's answer fully matches the factual content of the ideal answer, accurately stating the time limit for the Init phase and the correct behavior of Lambda when initialization tasks exceed this limit."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "The excerpt contradicts the answer by stating that the 10-second timeout does not apply to functions using provisioned concurrency, SnapStart, or Lambda Managed Instances, and instead provides a different timeout duration for these functions."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt states that the Init phase is limited to 10 seconds and provides details about the tasks performed during the Init phase, which supports the answer's claim about the time limit for the Init phase."
+          }
+        ]
+      },
+      "latency_seconds": 24.6
+    },
+    {
+      "id": "q003",
+      "question": "How does Lambda's handling of events differ between direct invocation and event source mapping?",
+      "difficulty": "medium",
+      "gold_source_doc": "Core concepts > Creating event-driven architectures",
+      "generated_answer": "When an event is triggered through direct invocation, Lambda receives the event data as a JSON document and converts it into an object that your code can process. \n\nWhen an event is triggered through event source mapping, Lambda actively fetches (or pulls) events from a queue or stream, and then invokes your function with the batched events.\n\nCitations: [1], [2]",
+      "ideal_answer": "With direct invocation (the push model), an AWS service such as Amazon S3 or API Gateway invokes the Lambda function directly in response to an event. With event source mapping (the pull model), Lambda actively polls a queue or stream such as Amazon SQS or a DynamoDB stream, batches records together, and then invokes the function with the batched events.",
+      "retrieved_sources": [
+        "Core concepts > Creating event-driven architectures",
+        "Core concepts > Core concepts overview",
+        "Core concepts > Creating event-driven architectures",
+        "Function scaling > Understanding and visualizing concurrency"
+      ],
+      "cited_chunk_ids": [
+        "c0029",
+        "c0004"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Core concepts > Creating event-driven architectures"
+        ],
+        "retrieved_sources": [
+          "Core concepts > Creating event-driven architectures",
+          "Core concepts > Core concepts overview",
+          "Core concepts > Creating event-driven architectures",
+          "Function scaling > Understanding and visualizing concurrency"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies that Lambda processes events differently in direct invocation and event source mapping, and that in the latter case, Lambda actively fetches events from a queue or stream. However, the answer lacks the specific mention of the push and pull models, which are crucial for understanding the difference between the two invocation methods. Additionally, the assistant's answer does not mention the role of AWS services like Amazon S3 or API Gateway in direct invocation, which is an important aspect of the ideal answer.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer correctly identifies that Lambda processes events differently in direct invocation and event source mapping, and that in the latter case, Lambda actively fetches events from a queue or stream. However, the answer lacks the specific mention of the push and pull models, which are crucial for understanding the difference between the two invocation methods. Additionally, the assistant's answer does not mention the role of AWS services like Amazon S3 or API Gateway in direct invocation, which is an important aspect of the ideal answer."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt provides relevant information about how AWS Lambda functions can be triggered through direct invocation and event source mapping, and how events are structured in JSON format when passed to the function."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about how AWS Lambda functions can be triggered and how they process event data, which supports the answer's claims about direct invocation and event source mapping."
+          }
+        ]
+      },
+      "latency_seconds": 26.11
+    },
+    {
+      "id": "q004",
+      "question": "How does the guide recommend implementing idempotency in a Lambda function that might receive the same event more than once?",
+      "difficulty": "medium",
+      "gold_source_doc": "Core concepts > Designing an application",
+      "generated_answer": "You can implement idempotency in Lambda functions by using a DynamoDB table to track recently processed identifiers to determine if the transaction has already been handled previously.\n\nSources:\n[1], [2]",
+      "ideal_answer": "Use a DynamoDB table to track identifiers of recently processed events, so the function can check whether a given transaction has already been handled. The DynamoDB table typically uses a Time To Live (TTL) value to expire old items and limit the storage space used.",
+      "retrieved_sources": [
+        "Core concepts > Designing an application",
+        "Function scaling > Understanding and visualizing concurrency",
+        "Core concepts > Creating event-driven architectures",
+        "Core concepts > Creating event-driven architectures"
+      ],
+      "cited_chunk_ids": [
+        "c0050",
+        "c0246"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Core concepts > Designing an application"
+        ],
+        "retrieved_sources": [
+          "Core concepts > Designing an application",
+          "Function scaling > Understanding and visualizing concurrency",
+          "Core concepts > Creating event-driven architectures",
+          "Core concepts > Creating event-driven architectures"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer is mostly correct and aligns well with the ideal answer's content. It correctly identifies the use of a DynamoDB table to track identifiers of recently processed events for idempotency. However, it lacks the mention of the Time To Live (TTL) value, which is an important detail for limiting storage space used and expiring old items.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer is mostly correct and aligns well with the ideal answer's content. It correctly identifies the use of a DynamoDB table to track identifiers of recently processed events for idempotency. However, it lacks the mention of the Time To Live (TTL) value, which is an important detail for limiting storage space used and expiring old items."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt discusses the importance of implementing idempotency in Lambda functions and mentions using a DynamoDB table for tracking processed identifiers, but it does not provide specific evidence or examples of how to implement idempotency using DynamoDB."
+          },
+          {
+            "supported": false,
+            "reasoning": "The excerpt does not provide any information about implementing idempotency in Lambda functions or using a DynamoDB table to track processed identifiers."
+          }
+        ]
+      },
+      "latency_seconds": 22.0
+    },
+    {
+      "id": "q005",
+      "question": "In the first-function console tutorial, which two runtimes can you choose from, and what instruction set architecture is left at its default?",
+      "difficulty": "easy",
+      "gold_source_doc": "Create your first function > Create your first function",
+      "generated_answer": "In the first-function console tutorial, you can choose from Node.js 20 and Python 3.12 as runtimes. The .NET 8 runtime is not mentioned as an option. The x86_64 instruction set architecture is left at its default.\n\nCitations: [2], [3]",
+      "ideal_answer": "You choose either Node.js 24 or Python 3.14 as the runtime, and the architecture is left at its default value of x86_64.",
+      "retrieved_sources": [
+        "Configuring functions > Instruction sets (ARM/x86)",
+        "Configuring functions > .zip file archives",
+        "Configuring functions > Instruction sets (ARM/x86)",
+        "Configuring functions > .zip file archives"
+      ],
+      "cited_chunk_ids": [
+        "c0077",
+        "c0117"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "gold_sources": [
+          "Create your first function > Create your first function"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Instruction sets (ARM/x86)",
+          "Configuring functions > .zip file archives",
+          "Configuring functions > Instruction sets (ARM/x86)",
+          "Configuring functions > .zip file archives"
+        ]
+      },
+      "answer_relevance": {
+        "score": 2,
+        "reasoning": "The assistant's answer is mostly incorrect because it lists the wrong versions of Node.js and Python as runtimes and omits the .NET 8 runtime, which is indeed an option in the AWS Lambda first-function console tutorial. Additionally, the instruction set architecture is correctly identified as x86_64, which is the default.",
+        "raw_judge_output": "SCORE: 2\n\nREASONING: The assistant's answer is mostly incorrect because it lists the wrong versions of Node.js and Python as runtimes and omits the .NET 8 runtime, which is indeed an option in the AWS Lambda first-function console tutorial. Additionally, the instruction set architecture is correctly identified as x86_64, which is the default."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReason: The excerpt does not provide evidence that the .NET 8 runtime is not an option, nor does it mention the default architecture setting."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt only mentions the availability and advantages of arm64 architecture, not Node.js 20, Python 3.12, or .NET 8 runtime, nor does it discuss the default instruction set architecture."
+          }
+        ]
+      },
+      "latency_seconds": 22.47
+    },
+    {
+      "id": "q006",
+      "question": "How do you view a function's invocation records when you invoke it outside of the Lambda console's built-in test feature?",
+      "difficulty": "easy",
+      "gold_source_doc": "Create your first function > Invoke the function",
+      "generated_answer": "To view a function's invocation records when you invoke it outside of the Lambda console's built-in test feature, you must use CloudWatch Logs.\n\nCitations: [1], [4]",
+      "ideal_answer": "You must use Amazon CloudWatch Logs to view the function's execution results, since the console's OUTPUT tab (with the response and function logs) is only available when testing directly from the console.",
+      "retrieved_sources": [
+        "Create your first function > Invoke the function",
+        "Configuring functions > Attaching functions to resources in another account",
+        "Core concepts > Running code",
+        "Create your first function > Invoke the function"
+      ],
+      "cited_chunk_ids": [
+        "c0060",
+        "c0062"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Create your first function > Invoke the function"
+        ],
+        "retrieved_sources": [
+          "Create your first function > Invoke the function",
+          "Configuring functions > Attaching functions to resources in another account",
+          "Core concepts > Running code",
+          "Create your first function > Invoke the function"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it accurately states that CloudWatch Logs must be used to view a function's invocation records when invoked outside of the Lambda console's built-in test feature, which aligns with the ideal answer's facts. The assistant's answer also includes citations, which supports the accuracy of the information provided.",
+        "raw_judge_output": "SCORE: 5\nREASONING: The assistant's answer is fully correct and complete, as it accurately states that CloudWatch Logs must be used to view a function's invocation records when invoked outside of the Lambda console's built-in test feature, which aligns with the ideal answer's facts. The assistant's answer also includes citations, which supports the accuracy of the information provided."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not provide any information about CloudWatch Logs or how to view invocation records outside of the Lambda console's built-in test feature."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about using CloudWatch Logs to view function invocation records, which supports the answer's claim that CloudWatch Logs must be used outside of the Lambda console's built-in test feature."
+          }
+        ]
+      },
+      "latency_seconds": 22.37
+    },
+    {
+      "id": "q007",
+      "question": "Besides deleting the Lambda function itself, what other two resources does the tutorial say you can clean up afterward?",
+      "difficulty": "easy",
+      "gold_source_doc": "Create your first function > Clean up and next steps",
+      "generated_answer": "Besides deleting the Lambda function itself, the tutorial says you can clean up the execution role and the Hyperplane ENI.\n\nCitations: [1], [3]",
+      "ideal_answer": "You can also delete the CloudWatch Logs log group that stores the function's logs, and the IAM execution role that the console automatically created for the function.",
+      "retrieved_sources": [
+        "Function scaling > Understanding and visualizing concurrency",
+        "Create your first function > Clean up and next steps",
+        "Configuring functions > Attaching functions to a VPC",
+        "Core concepts > Running code"
+      ],
+      "cited_chunk_ids": [
+        "c0244",
+        "c0154"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Create your first function > Clean up and next steps"
+        ],
+        "retrieved_sources": [
+          "Function scaling > Understanding and visualizing concurrency",
+          "Create your first function > Clean up and next steps",
+          "Configuring functions > Attaching functions to a VPC",
+          "Core concepts > Running code"
+        ]
+      },
+      "answer_relevance": {
+        "score": 2,
+        "reasoning": "The assistant's answer incorrectly mentions Hyperplane ENI, which is not a resource associated with AWS Lambda. The ideal answer correctly identifies the CloudWatch Logs log group and the IAM execution role as the two additional resources to clean up.",
+        "raw_judge_output": "SCORE: 2\n\nREASONING: The assistant's answer incorrectly mentions Hyperplane ENI, which is not a resource associated with AWS Lambda. The ideal answer correctly identifies the CloudWatch Logs log group and the IAM execution role as the two additional resources to clean up."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "The excerpt does not provide any information about Hyperplane ENIs or how to clean them up."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not provide relevant supporting evidence for the claim that one can clean up the execution role and the Hyperplane ENI, as it does not discuss the deletion of the execution role or the Hyperplane ENI directly."
+          }
+        ]
+      },
+      "latency_seconds": 23.54
+    },
+    {
+      "id": "q008",
+      "question": "According to the configuring-functions overview, what advantage does self-managed S3 code storage offer over Lambda's default storage behavior?",
+      "difficulty": "easy",
+      "gold_source_doc": "Configuring functions > Configuring functions overview",
+      "generated_answer": "Self-managed S3 code storage offers the advantage that it does not count against the Lambda-managed storage quota, allowing for more storage space for the code.\n\nCitations: [1], [2]",
+      "ideal_answer": "It lets Lambda reference your function code directly from your own S3 bucket instead of copying it into Lambda-managed storage, which eliminates the Lambda-managed storage limits and reduces the time to first invoke.",
+      "retrieved_sources": [
+        "Configuring functions > Self-managed S3 code storage",
+        "Configuring functions > Self-managed S3 code storage",
+        "Configuring functions > Self-managed S3 code storage",
+        "Configuring functions > Self-managed S3 code storage"
+      ],
+      "cited_chunk_ids": [
+        "c0103",
+        "c0104"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "gold_sources": [
+          "Configuring functions > Configuring functions overview"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Self-managed S3 code storage",
+          "Configuring functions > Self-managed S3 code storage",
+          "Configuring functions > Self-managed S3 code storage",
+          "Configuring functions > Self-managed S3 code storage"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies that self-managed S3 code storage does not count against the Lambda-managed storage quota, which is a key advantage. However, it omits the detail about the time to first invoke and the ability to reference code directly from the S3 bucket, which are important aspects mentioned in the ideal answer.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer correctly identifies that self-managed S3 code storage does not count against the Lambda-managed storage quota, which is a key advantage. However, it omits the detail about the time to first invoke and the ability to reference code directly from the S3 bucket, which are important aspects mentioned in the ideal answer."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt directly supports the part of the answer stating that self-managed S3 code storage allows for more storage space for the code by explaining that Lambda does not store a copy of the code, thus not counting against the Lambda-managed storage quota."
+          },
+          {
+            "supported": false,
+            "reasoning": "The excerpt discusses the technical steps for setting up self-managed S3 code storage for AWS Lambda, but it does not provide evidence about the advantage of not counting against the Lambda-managed storage quota."
+          }
+        ]
+      },
+      "latency_seconds": 24.61
+    },
+    {
+      "id": "q009",
+      "question": "For a scripting-language function edited in the Lambda console's built-in code editor, at what code size must you switch to uploading a .zip archive, and where must larger archives be uploaded from?",
+      "difficulty": "medium",
+      "gold_source_doc": "Configuring functions > .zip file archives",
+      "generated_answer": "For a scripting-language function edited in the Lambda console's built-in code editor, you must switch to uploading a .zip archive when the code size exceeds 3MB.\n\nLarger archives must be uploaded from an Amazon S3 bucket.\n\nCitations: [1], [4]",
+      "ideal_answer": "You must upload a .zip archive instead of using the embedded editor once the code is larger than 3 MB, if you need to add libraries, or if the editor doesn't support the language (Java, Go, C#). A .zip archive under 50 MB can be uploaded from your local machine, but if it's larger than 50 MB you must upload it to the function from an Amazon S3 bucket.",
+      "retrieved_sources": [
+        "Configuring functions > .zip file archives",
+        "Configuring functions > .zip file archives",
+        "Configuring functions > .zip file archives",
+        "Configuring functions > .zip file archives"
+      ],
+      "cited_chunk_ids": [
+        "c0075",
+        "c0078"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > .zip file archives"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > .zip file archives",
+          "Configuring functions > .zip file archives",
+          "Configuring functions > .zip file archives",
+          "Configuring functions > .zip file archives"
+        ]
+      },
+      "answer_relevance": {
+        "score": 2,
+        "reasoning": "The assistant's answer correctly identifies the 3 MB threshold for switching to a .zip archive but omits the details about the 50 MB limit, the need for libraries, and the language support limitations. It also fails to mention the specific upload locations for archives of different sizes.",
+        "raw_judge_output": "SCORE: 2\nREASONING: The assistant's answer correctly identifies the 3 MB threshold for switching to a .zip archive but omits the details about the 50 MB limit, the need for libraries, and the language support limitations. It also fails to mention the specific upload locations for archives of different sizes."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt explains the process of uploading function code as a .zip archive when the code size exceeds 3MB, which supports the answer's claim about the necessity of switching to uploading a .zip archive for larger scripts."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt explains that for functions using .zip file deployment packages, a new .zip file must be prepared for the target runtime and instruction-set architecture, which supports the part of the answer stating that larger archives must be uploaded from an Amazon S3 bucket."
+          }
+        ]
+      },
+      "latency_seconds": 25.7
+    },
+    {
+      "id": "q010",
+      "question": "What restrictions does Lambda place on the operating system, file system, and size of a container image used for a function?",
+      "difficulty": "medium",
+      "gold_source_doc": "Configuring functions > Container images",
+      "generated_answer": "Lambda requires the container image to be able to run on a read-only file system. Your function code can access a writable /tmp directory with between 512 MB and 10,240 MB, in 1-MB increments, of storage. The default Lambda user must be able to read all the files required to run your function code.\n\nCitations: [2], [4]",
+      "ideal_answer": "Lambda supports only Linux-based container images, the image must be able to run on a read-only file system (though the /tmp directory remains writable, between 512 MB and 10,240 MB), and Lambda supports a maximum uncompressed image size of 10 GB including all layers. Each image must also target a single architecture, since Lambda does not support functions that use multi-architecture container images.",
+      "retrieved_sources": [
+        "Configuring functions > Container images",
+        "Configuring functions > Container images",
+        "Configuring functions > Container images",
+        "Configuring functions > Container images"
+      ],
+      "cited_chunk_ids": [
+        "c0093",
+        "c0096"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Container images"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Container images",
+          "Configuring functions > Container images",
+          "Configuring functions > Container images",
+          "Configuring functions > Container images"
+        ]
+      },
+      "answer_relevance": {
+        "score": 2,
+        "reasoning": "The assistant's answer touches on the read-only file system and the writable /tmp directory size but omits the critical details about the supported operating system, the maximum uncompressed image size, and the restriction on multi-architecture container images.",
+        "raw_judge_output": "SCORE: 2\nREASONING: The assistant's answer touches on the read-only file system and the writable /tmp directory size but omits the critical details about the supported operating system, the maximum uncompressed image size, and the restriction on multi-architecture container images."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "The excerpt does not provide information about the read-only file system requirement, the writable /tmp directory, or the default Lambda user's permissions."
+          },
+          {
+            "supported": false,
+            "reasoning": "The excerpt does not provide any information about the read-only file system requirement, writable /tmp directory, or the default Lambda user permissions."
+          }
+        ]
+      },
+      "latency_seconds": 28.88
+    },
+    {
+      "id": "q011",
+      "question": "How does self-managed S3 code storage affect the 300 GB per-Region Lambda-managed storage quota and the maximum .zip deployment package size?",
+      "difficulty": "medium",
+      "gold_source_doc": "Configuring functions > Self-managed S3 code storage",
+      "generated_answer": "Self-managed S3 code storage does not affect the 300 GB per-Region Lambda-managed storage quota, as the code is stored directly in an S3 bucket and does not count against the quota.\n\nThe maximum .zip deployment package size remains at 250 MB (unzipped), as stated in the documentation.\n\nSources:\n[1], [3]",
+      "ideal_answer": "Because Lambda no longer keeps its own copy of the code, self-managed S3 code storage lets that code avoid counting against the 300 GB Lambda-managed storage quota per Region. However, it does not change the maximum .zip deployment package size, which remains 250 MB unzipped either way.",
+      "retrieved_sources": [
+        "Configuring functions > Self-managed S3 code storage",
+        "Configuring functions > Self-managed S3 code storage",
+        "Configuring functions > Self-managed S3 code storage",
+        "Configuring functions > .zip file archives"
+      ],
+      "cited_chunk_ids": [
+        "c0103",
+        "c0109"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.75,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Self-managed S3 code storage"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Self-managed S3 code storage",
+          "Configuring functions > Self-managed S3 code storage",
+          "Configuring functions > Self-managed S3 code storage",
+          "Configuring functions > .zip file archives"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant correctly states that self-managed S3 code storage does not count against the Lambda-managed storage quota, which aligns with the ideal answer. However, the assistant could have explicitly mentioned that the maximum .zip deployment package size remains unchanged at 250 MB, which is a crucial detail from the ideal answer.",
+        "raw_judge_output": "SCORE: 4\nREASONING: The assistant correctly states that self-managed S3 code storage does not count against the Lambda-managed storage quota, which aligns with the ideal answer. However, the assistant could have explicitly mentioned that the maximum .zip deployment package size remains unchanged at 250 MB, which is a crucial detail from the ideal answer."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt confirms that self-managed S3 code storage allows Lambda to reference code directly from an S3 bucket, which does not count against the Lambda-managed storage quota, supporting the part of the answer about the quota not being affected."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt confirms that self-managed S3 code storage is compatible with Lambda functions and layers, and that the maximum .zip deployment package size remains at 250 MB, which supports the answer's claims."
+          }
+        ]
+      },
+      "latency_seconds": 19.67
+    },
+    {
+      "id": "q012",
+      "question": "What memory setting gives a Lambda function the equivalent of one full vCPU, and over what overall range can memory be configured?",
+      "difficulty": "easy",
+      "gold_source_doc": "Configuring functions > Memory",
+      "generated_answer": "A Lambda function has the equivalent of one full vCPU at 1,769 MB of memory.\n\nCitations: [1], [2]",
+      "ideal_answer": "At 1,769 MB, a function gets the equivalent of one vCPU (one vCPU-second of credits per second). Memory can be configured anywhere between 128 MB and 10,240 MB, in 1 MB increments.",
+      "retrieved_sources": [
+        "Configuring functions > Memory",
+        "Configuring functions > Memory",
+        "Configuring functions > Ephemeral storage",
+        "Configuring functions > Memory"
+      ],
+      "cited_chunk_ids": [
+        "c0110",
+        "c0111"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.75,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Memory"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Memory",
+          "Configuring functions > Memory",
+          "Configuring functions > Ephemeral storage",
+          "Configuring functions > Memory"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies that 1,769 MB of memory gives a Lambda function the equivalent of one full vCPU. However, the answer lacks the detail about the overall memory configuration range and the fact that memory can be configured in 1 MB increments, which are important aspects of the ideal answer.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer correctly identifies that 1,769 MB of memory gives a Lambda function the equivalent of one full vCPU. However, the answer lacks the detail about the overall memory configuration range and the fact that memory can be configured in 1 MB increments, which are important aspects of the ideal answer."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt directly states that at 1,769 MB, a Lambda function has the equivalent of one vCPU, which supports the part of the answer claiming that a Lambda function has the equivalent of one full vCPU at 1,769 MB of memory."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt discusses the relationship between memory allocation and computational power, as well as monitoring and optimizing Lambda functions, but it does not provide specific information about the equivalent of one full vCPU at 1,769 MB of memory for a Lambda function."
+          }
+        ]
+      },
+      "latency_seconds": 24.08
+    },
+    {
+      "id": "q013",
+      "question": "What range can you configure for a function's ephemeral /tmp storage, and is the data stored there encrypted?",
+      "difficulty": "easy",
+      "gold_source_doc": "Configuring functions > Ephemeral storage",
+      "generated_answer": "The range for configuring a function's ephemeral /tmp storage is between 512 MB and 10,240 MB, in 1-MB increments.\n\nThe data stored in /tmp is encrypted at rest with a key managed by AWS.\n\nSources:\n[1], [2], [3]",
+      "ideal_answer": "Ephemeral storage can be configured between 512 MB and 10,240 MB, in 1 MB increments. Yes, all data stored in /tmp is encrypted at rest with a key managed by AWS.",
+      "retrieved_sources": [
+        "Configuring functions > Ephemeral storage",
+        "Configuring functions > Ephemeral storage",
+        "Configuring functions > Ephemeral storage",
+        "Configuring functions > Versions"
+      ],
+      "cited_chunk_ids": [
+        "c0114",
+        "c0115",
+        "c0116"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.75,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Ephemeral storage"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Ephemeral storage",
+          "Configuring functions > Ephemeral storage",
+          "Configuring functions > Ephemeral storage",
+          "Configuring functions > Versions"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer fully matches the ideal answer's facts, correctly stating the range for ephemeral storage and confirming that the data is encrypted with a key managed by AWS.",
+        "raw_judge_output": "SCORE: 5\nREASONING: The assistant's answer fully matches the ideal answer's facts, correctly stating the range for ephemeral storage and confirming that the data is encrypted with a key managed by AWS."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 3,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about the range and configuration of ephemeral storage for AWS Lambda functions, as well as the encryption of data at rest, which supports the answer's factual content."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides specific information about the range for configuring a function's ephemeral /tmp storage (512 MB to 10,240 MB) and the fact that it is in 1-MB increments, which supports the answer's claim about the storage configuration options for AWS Lambda."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides evidence that AWS allows configuring ephemeral storage for Lambda functions with a size between 512 MB and 10,240 MB, as demonstrated by the example configurations provided."
+          }
+        ]
+      },
+      "latency_seconds": 24.55
+    },
+    {
+      "id": "q014",
+      "question": "Which two instruction set architectures can a Lambda function use, and which processor backs the arm64 option?",
+      "difficulty": "easy",
+      "gold_source_doc": "Configuring functions > Instruction sets (ARM/x86)",
+      "generated_answer": "A Lambda function can use either arm64 or x86_64 instruction set architectures.\n\nThe arm64 option is backed by the AWS Graviton2 processor.\n\nSources:\n[1], [3]",
+      "ideal_answer": "A function can use either arm64 or x86_64. The arm64 architecture runs on the AWS Graviton2 processor, which uses the Neoverse N1 core and supports Armv8.2 along with several other architectural extensions.",
+      "retrieved_sources": [
+        "Configuring functions > Instruction sets (ARM/x86)",
+        "Configuring functions > Instruction sets (ARM/x86)",
+        "Configuring functions > Instruction sets (ARM/x86)",
+        "Configuring functions > Instruction sets (ARM/x86)"
+      ],
+      "cited_chunk_ids": [
+        "c0117",
+        "c0118"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Instruction sets (ARM/x86)"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Instruction sets (ARM/x86)",
+          "Configuring functions > Instruction sets (ARM/x86)",
+          "Configuring functions > Instruction sets (ARM/x86)",
+          "Configuring functions > Instruction sets (ARM/x86)"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies the two instruction set architectures (arm64 and x86_64) that a Lambda function can use. However, it lacks the specific detail about the processor that backs the arm64 option, which is the AWS Graviton2 processor with the Neoverse N1 core and Armv8.2 support. This omission prevents the answer from being fully complete, but it is not entirely incorrect or off-topic.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer correctly identifies the two instruction set architectures (arm64 and x86_64) that a Lambda function can use. However, it lacks the specific detail about the processor that backs the arm64 option, which is the AWS Graviton2 processor with the Neoverse N1 core and Armv8.2 support. This omission prevents the answer from being fully complete, but it is not entirely incorrect or off-topic."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt confirms that AWS Lambda functions can use either arm64 or x86_64 architectures, with arm64 being backed by the AWS Graviton2 processor."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about the AWS Graviton2 processor, which supports the arm64 instruction set architecture, and mentions the benefits of using arm64 for compute-intensive applications, which aligns with the answer."
+          }
+        ]
+      },
+      "latency_seconds": 25.42
+    },
+    {
+      "id": "q015",
+      "question": "What is the default timeout value for a new Lambda function, and what is the maximum you can set it to?",
+      "difficulty": "easy",
+      "gold_source_doc": "Configuring functions > Timeout",
+      "generated_answer": "The default timeout value for a new Lambda function is 3 seconds, and the maximum value you can set it to is 900 seconds (15 minutes).\n\nCitations: [1], [3]",
+      "ideal_answer": "The default timeout is 3 seconds. You can increase it in 1-second increments up to a maximum of 900 seconds (15 minutes).",
+      "retrieved_sources": [
+        "Configuring functions > Timeout",
+        "Core concepts > Running code",
+        "Configuring functions > Timeout",
+        "Core concepts > Running code"
+      ],
+      "cited_chunk_ids": [
+        "c0122",
+        "c0123"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Timeout"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Timeout",
+          "Core concepts > Running code",
+          "Configuring functions > Timeout",
+          "Core concepts > Running code"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it accurately states the default timeout value and the maximum value for AWS Lambda functions, which matches the facts in the ideal answer. The assistant also includes citations, which supports the accuracy of the information provided.",
+        "raw_judge_output": "SCORE: 5\nREASONING: The assistant's answer is fully correct and complete, as it accurately states the default timeout value and the maximum value for AWS Lambda functions, which matches the facts in the ideal answer. The assistant also includes citations, which supports the accuracy of the information provided."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt directly states that the default timeout value for a Lambda function is 3 seconds and can be set up to a maximum of 900 seconds (15 minutes), which supports the answer provided by the AI assistant."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about the default timeout value for AWS Lambda functions and how to configure it, which supports the answer's claim about the default and maximum timeout values."
+          }
+        ]
+      },
+      "latency_seconds": 24.73
+    },
+    {
+      "id": "q016",
+      "question": "What are the formatting rules for an environment variable's key name in Lambda, and what's the total size limit across all of a function's environment variables?",
+      "difficulty": "medium",
+      "gold_source_doc": "Configuring functions > Environment variables",
+      "generated_answer": "Keys start with a letter and are at least two characters. Keys only contain letters, numbers, and the underscore character (_). Keys aren't reserved by Lambda. The total size of all environment variables doesn't exceed 4 KB.\n\nCitations: [1], [4]",
+      "ideal_answer": "A key must start with a letter, be at least two characters long, and contain only letters, numbers, and underscores, and it can't be a name reserved by Lambda. The combined size of all of a function's environment variables can't exceed 4 KB.",
+      "retrieved_sources": [
+        "Configuring functions > Environment variables",
+        "Configuring functions > Environment variables",
+        "Configuring functions > Environment variables",
+        "Configuring functions > Environment variables"
+      ],
+      "cited_chunk_ids": [
+        "c0126",
+        "c0132"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Environment variables"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Environment variables",
+          "Configuring functions > Environment variables",
+          "Configuring functions > Environment variables",
+          "Configuring functions > Environment variables"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it accurately reflects the formatting rules for an environment variable's key name in AWS Lambda and correctly states the total size limit across all of a function's environment variables. The citations provided in the answer also support the accuracy of the information.",
+        "raw_judge_output": "SCORE: 5\n\nREASONING: The assistant's answer is fully correct and complete, as it accurately reflects the formatting rules for an environment variable's key name in AWS Lambda and correctly states the total size limit across all of a function's environment variables. The citations provided in the answer also support the accuracy of the information."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt provides relevant information supporting the answer's claims about the requirements for Lambda environment variable keys, such as starting with a letter, being at least two characters long, containing only letters, numbers, and underscores, and not being reserved by Lambda. It also confirms the 4 KB size limit for the total size of all environment variables."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt discusses reserved environment variables and their usage in Lambda, but it does not provide specific information about the naming conventions or size limitations of Lambda keys, which are part of the answer."
+          }
+        ]
+      },
+      "latency_seconds": 24.21
+    },
+    {
+      "id": "q017",
+      "question": "What is a Hyperplane ENI, and what happens to a VPC-connected function's network interfaces if the function sits idle for 14 days?",
+      "difficulty": "medium",
+      "gold_source_doc": "Configuring functions > Attaching functions to a VPC",
+      "generated_answer": "A Hyperplane ENI is a managed resource that acts as a network interface between your Lambda function and the resources you want your function to connect to.\n\nIf a VPC-connected function sits idle for 14 days, Lambda reclaims any unused Hyperplane ENIs and sets the function state to Inactive. The next invocation attempt will fail, and the function re-enters the Pending state until Lambda completes the creation or allocation of a Hyperplane ENI.\n\nCitations: [1], [2], [3]",
+      "ideal_answer": "A Hyperplane ENI is a managed elastic network interface that Lambda creates and manages to connect a function to resources in a VPC; each one supports up to 65,000 connections/ports and can be shared by other functions using the same subnet and security group combination. If a function remains idle for 14 days, Lambda reclaims any unused Hyperplane ENIs and sets the function's state to Inactive, so the next invocation attempt fails while Lambda re-enters the Pending state to recreate or reallocate the ENI.",
+      "retrieved_sources": [
+        "Configuring functions > Attaching functions to a VPC",
+        "Configuring functions > Attaching functions to a VPC",
+        "Configuring functions > Attaching functions to a VPC",
+        "Configuring functions > Inbound networking"
+      ],
+      "cited_chunk_ids": [
+        "c0153",
+        "c0154",
+        "c0152"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.75,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Attaching functions to a VPC"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Attaching functions to a VPC",
+          "Configuring functions > Attaching functions to a VPC",
+          "Configuring functions > Attaching functions to a VPC",
+          "Configuring functions > Inbound networking"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies a Hyperplane ENI as a managed resource and acknowledges the reclaiming of unused ENIs after a function sits idle. However, the answer lacks specific details about the Hyperplane ENI's capabilities, such as the number of connections/ports it supports and the fact that it can be shared by other functions. Additionally, the assistant's explanation of the function's state transition is not entirely accurate, as it should be set to Inactive, not just fail the next invocation attempt.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer correctly identifies a Hyperplane ENI as a managed resource and acknowledges the reclaiming of unused ENIs after a function sits idle. However, the answer lacks specific details about the Hyperplane ENI's capabilities, such as the number of connections/ports it supports and the fact that it can be shared by other functions. Additionally, the assistant's explanation of the function's state transition is not entirely accurate, as it should be set to Inactive, not just fail the next invocation attempt."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.6666666666666666,
+        "n_citations": 3,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about how Lambda creates and manages Hyperplane ENIs, their connection limits, and the behavior of functions when attaching to a VPC, which supports the answer's claim about Hyperplane ENIs and their role in function connectivity."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about the lifecycle of Hyperplane ENIs, including their deletion after a function remains idle for 14 days, and the re-entry into the Pending state, which supports the answer's claim about ENI reclaim and function state changes."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt discusses the use of Hyperplane ENIs in the context of VPCs and their lifecycle, but it does not provide specific information about the behavior of idle Lambda functions or the reclaiming of unused Hyperplane ENIs."
+          }
+        ]
+      },
+      "latency_seconds": 31.12
+    },
+    {
+      "id": "q018",
+      "question": "What networking mechanism does the cross-account tutorial use to let a Lambda function reach a resource in another account's VPC without exposing either VPC to the internet?",
+      "difficulty": "medium",
+      "gold_source_doc": "Configuring functions > Attaching functions to resources in another account",
+      "generated_answer": "A VPC peering connection is used to let a Lambda function reach a resource in another account's VPC without exposing either VPC to the internet.\n\nCitations: [1], [2]",
+      "ideal_answer": "It configures a Lambda function to use an Amazon VPC peering connection between the function's VPC and the resource's VPC, along with DNS resolution settings on both sides of the peering connection so the function can resolve resources that don't have static IP addresses.",
+      "retrieved_sources": [
+        "Configuring functions > Attaching functions to resources in another account",
+        "Configuring functions > Attaching functions to a VPC",
+        "Configuring functions > Internet access for VPC functions",
+        "Configuring functions > Attaching functions to a VPC"
+      ],
+      "cited_chunk_ids": [
+        "c0161",
+        "c0160"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Attaching functions to resources in another account"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Attaching functions to resources in another account",
+          "Configuring functions > Attaching functions to a VPC",
+          "Configuring functions > Internet access for VPC functions",
+          "Configuring functions > Attaching functions to a VPC"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies that a VPC peering connection is used to connect the Lambda function's VPC to another account's VPC without exposing them to the internet. However, it omits the important detail about DNS resolution settings on both sides of the peering connection, which are necessary for the function to resolve resources without static IP addresses.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer correctly identifies that a VPC peering connection is used to connect the Lambda function's VPC to another account's VPC without exposing them to the internet. However, it omits the important detail about DNS resolution settings on both sides of the peering connection, which are necessary for the function to resolve resources without static IP addresses."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information supporting the part of the answer that discusses using a VPC peering connection to allow a Lambda function to access a resource in another account's VPC without exposing either VPC to the internet."
+          },
+          {
+            "supported": false,
+            "reasoning": "The excerpt discusses connecting a Lambda function to resources in another account's VPC, but it does not mention anything about VPC peering connections or the specific use case of reaching a resource in another account's VPC without exposing either VPC to the internet."
+          }
+        ]
+      },
+      "latency_seconds": 23.44
+    },
+    {
+      "id": "q019",
+      "question": "If you attach a Lambda function to your own VPC to reach a private database, why might the function lose the internet access it had by default, and what resource restores outbound internet access from a private subnet?",
+      "difficulty": "hard",
+      "gold_source_doc": "Configuring functions > Attaching functions to a VPC ; Configuring functions > Internet access for VPC functions",
+      "generated_answer": "If you attach a Lambda function to your own VPC to reach a private database, the function might lose the internet access it had by default because the VPC configuration restricts the function to resources within that VPC, unless the VPC has internet access.\n\nThe resource that restores outbound internet access from a private subnet is the NAT gateway.\n\nCitations: [2], [3]",
+      "ideal_answer": "By default, Lambda functions run in a Lambda-managed VPC that has internet access. Once you attach the function to a VPC in your own account, it can only reach resources inside that VPC unless the VPC itself is configured with internet access — simply connecting to a public subnet does not give the function internet access or a public IP address. To restore outbound internet access, you route the private subnet's traffic through a NAT gateway that sits in a public subnet with a route to an internet gateway.",
+      "retrieved_sources": [
+        "Configuring functions > Internet access for VPC functions",
+        "Configuring functions > Internet access for VPC functions",
+        "Configuring functions > Attaching functions to a VPC",
+        "Configuring functions > Attaching functions to a VPC"
+      ],
+      "cited_chunk_ids": [
+        "c0184",
+        "c0144"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Attaching functions to a VPC",
+          "Configuring functions > Internet access for VPC functions"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Internet access for VPC functions",
+          "Configuring functions > Internet access for VPC functions",
+          "Configuring functions > Attaching functions to a VPC",
+          "Configuring functions > Attaching functions to a VPC"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies that attaching a Lambda function to a VPC can restrict internet access to resources within that VPC. However, the answer lacks the detail about the necessity of a NAT gateway in a public subnet with a route to an internet gateway, which is crucial for restoring outbound internet access.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer correctly identifies that attaching a Lambda function to a VPC can restrict internet access to resources within that VPC. However, the answer lacks the detail about the necessity of a NAT gateway in a public subnet with a route to an internet gateway, which is crucial for restoring outbound internet access."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about configuring a Lambda function to access the internet through a NAT gateway in a VPC, which supports the part of the answer discussing internet access loss and restoration."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not provide information about the role of a NAT gateway in providing outbound internet access from a private subnet, which is essential to the answer."
+          }
+        ]
+      },
+      "latency_seconds": 28.96
+    },
+    {
+      "id": "q020",
+      "question": "Before you can mount an Amazon EFS file system to a Lambda function, what networking prerequisite must already be in place, and what port must the relevant security groups allow?",
+      "difficulty": "hard",
+      "gold_source_doc": "Configuring functions > File systems ; Configuring functions > Attaching functions to a VPC",
+      "generated_answer": "To mount an Amazon EFS file system to a Lambda function, a networking prerequisite must already be in place, which is an interface VPC endpoint.\n\nThe relevant security groups must allow NFS traffic (port 2049) between the Lambda function and the mount targets.\n\nSources:\n[2], [4]",
+      "ideal_answer": "The function must already be connected to a VPC, since it reaches EFS mount targets over the VPC's local network — if it isn't already attached to one, you first have to give it VPC access. The security groups used by both the function and the EFS mount targets must allow NFS traffic on port 2049.",
+      "retrieved_sources": [
+        "Configuring functions > File systems",
+        "Configuring functions > File systems",
+        "Configuring functions > Configuring functions overview",
+        "Configuring functions > File systems"
+      ],
+      "cited_chunk_ids": [
+        "c0197",
+        "c0198"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.75,
+        "recall_at_k": 0.5,
+        "gold_sources": [
+          "Configuring functions > File systems",
+          "Configuring functions > Attaching functions to a VPC"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > File systems",
+          "Configuring functions > File systems",
+          "Configuring functions > Configuring functions overview",
+          "Configuring functions > File systems"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies the need for a VPC and the requirement for NFS traffic on port 2049, which aligns with the ideal answer. However, it omits the detail about the function needing to be attached to a VPC and the necessity of a VPC endpoint, which are crucial networking prerequisites.",
+        "raw_judge_output": "SCORE: 4\nREASONING: The assistant's answer correctly identifies the need for a VPC and the requirement for NFS traffic on port 2049, which aligns with the ideal answer. However, it omits the detail about the function needing to be attached to a VPC and the necessity of a VPC endpoint, which are crucial networking prerequisites."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not provide information about networking prerequisites, VPC endpoints, or security group configurations for mounting an Amazon EFS file system to a Lambda function. It only provides details about Amazon EFS for Lambda pricing, supported regions, and configuring Amazon S3 Files access, which are not directly relevant to the networking requirements mentioned in the answer."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt discusses the prerequisites for using Amazon S3 Files with a Lambda function, but it does not mention anything about networking prerequisites, VPC endpoint interfaces, or mounting an Amazon EFS file system to a Lambda function."
+          }
+        ]
+      },
+      "latency_seconds": 28.06
+    },
+    {
+      "id": "q021",
+      "question": "What two conditions must both function versions satisfy before you can point a weighted alias at them for a canary deployment?",
+      "difficulty": "medium",
+      "gold_source_doc": "Configuring functions > Aliases",
+      "generated_answer": "Both function versions must have the same execution role and the same dead-letter queue configuration, or no dead-letter queue configuration.\n\nCitations: [1], [2]",
+      "ideal_answer": "Both versions must use the same execution role, and they must have the same dead-letter queue configuration (or no dead-letter queue configuration at all). Additionally, both versions must already be published — a weighted alias can't point to the unpublished $LATEST version.",
+      "retrieved_sources": [
+        "Configuring functions > Aliases",
+        "Configuring functions > Aliases",
+        "Configuring functions > Aliases",
+        "Configuring functions > Aliases"
+      ],
+      "cited_chunk_ids": [
+        "c0207",
+        "c0208"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Aliases"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Aliases",
+          "Configuring functions > Aliases",
+          "Configuring functions > Aliases",
+          "Configuring functions > Aliases"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies that both versions must have the same execution role and dead-letter queue configuration, or no dead-letter queue configuration. However, it omits the critical detail that both versions must already be published, which is an important aspect of setting up a weighted alias for a canary deployment.",
+        "raw_judge_output": "SCORE: 4\nREASONING: The assistant's answer correctly identifies that both versions must have the same execution role and dead-letter queue configuration, or no dead-letter queue configuration. However, it omits the critical detail that both versions must already be published, which is an important aspect of setting up a weighted alias for a canary deployment."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt directly supports the part of the answer stating that both function versions must have the same execution role and the same dead-letter queue configuration, or no dead-letter queue configuration."
+          },
+          {
+            "supported": false,
+            "reasoning": "The excerpt does not provide any information about the execution role or dead-letter queue configuration for the function versions."
+          }
+        ]
+      },
+      "latency_seconds": 24.71
+    },
+    {
+      "id": "q022",
+      "question": "What happens to a Lambda function's code and configuration once you publish a version of it?",
+      "difficulty": "easy",
+      "gold_source_doc": "Configuring functions > Versions",
+      "generated_answer": "Once you publish a version of a Lambda function, its code and configuration are immutable, meaning you can't change these settings without publishing a new version from the $LATEST version.\n\nCitations: [1], [2], [3], [4]",
+      "ideal_answer": "Publishing a version creates an immutable snapshot: the code, runtime, architecture, memory, layers, and most other configuration settings become locked and can't be changed. To make changes, you must modify $LATEST and publish a new version.",
+      "retrieved_sources": [
+        "Configuring functions > Versions",
+        "Configuring functions > Versions",
+        "Configuring functions > Versions",
+        "Configuring functions > Versions"
+      ],
+      "cited_chunk_ids": [
+        "c0214",
+        "c0217",
+        "c0215",
+        "c0216"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Versions"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Versions",
+          "Configuring functions > Versions",
+          "Configuring functions > Versions",
+          "Configuring functions > Versions"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it accurately reflects the key points of the ideal answer, including the immutability of the published version and the necessity to modify the $LATEST version to make changes. The answer also correctly identifies that changes require publishing a new version, which aligns with the ideal answer's description of the process. The citations are not necessary for this evaluation as the answer is factually accurate and complete.",
+        "raw_judge_output": "SCORE: 5\nREASONING: The assistant's answer is fully correct and complete, as it accurately reflects the key points of the ideal answer, including the immutability of the published version and the necessity to modify the $LATEST version to make changes. The answer also correctly identifies that changes require publishing a new version, which aligns with the ideal answer's description of the process. The citations are not necessary for this evaluation as the answer is factually accurate and complete."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.25,
+        "n_citations": 4,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt explains that after publishing a function version, its settings are immutable, which supports the part of the answer stating that changes to the code or configuration settings require publishing a new version."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not support the claim that once a Lambda function version is published, its code and configuration are immutable and cannot be changed without publishing a new version. It mentions that not all configuration changes trigger the publication of a new version, implying that some changes can be made without publishing a new version."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt contradicts the answer by stating that the runtime version is not updated when using Function update or Manual mode, while the answer claims that the runtime version is immutable and cannot be changed without publishing a new version."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not support the claim that code and configuration settings cannot be changed without publishing a new version; it only mentions that Lambda assigns monotonically increasing sequence numbers for versioning and that versions can be referenced using either a qualified or unqualified ARN."
+          }
+        ]
+      },
+      "latency_seconds": 26.0
+    },
+    {
+      "id": "q023",
+      "question": "Do tags on a Lambda function apply separately to each published version and alias, or only to the function as a whole?",
+      "difficulty": "easy",
+      "gold_source_doc": "Configuring functions > Tags",
+      "generated_answer": "Tags on a Lambda function apply to the function as a whole, not separately to each published version and alias.\n\nCitations: [1], [4]",
+      "ideal_answer": "Tags apply only at the function level, not to individual versions or aliases, and they are not part of the version-specific configuration snapshot that Lambda creates when you publish a version.",
+      "retrieved_sources": [
+        "Configuring functions > Tags",
+        "Configuring functions > Versions",
+        "Configuring functions > Aliases",
+        "Configuring functions > Tags"
+      ],
+      "cited_chunk_ids": [
+        "c0219",
+        "c0220"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Tags"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Tags",
+          "Configuring functions > Versions",
+          "Configuring functions > Aliases",
+          "Configuring functions > Tags"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it accurately reflects the factual content of the ideal answer by stating that tags apply to the function as a whole and not to individual versions or aliases. The assistant's answer also correctly identifies that tags are not part of the version-specific configuration snapshot created when a version is published.",
+        "raw_judge_output": "SCORE: 5\nREASONING: The assistant's answer is fully correct and complete, as it accurately reflects the factual content of the ideal answer by stating that tags apply to the function as a whole and not to individual versions or aliases. The assistant's answer also correctly identifies that tags are not part of the version-specific configuration snapshot created when a version is published."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt directly supports the answer by stating that \"Tags apply at the function level, not to versions or aliases,\" confirming that tags are associated with the function as a whole."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt discusses how to add tags to a Lambda function using the Lambda console, but it does not provide information about whether tags apply to the function as a whole or separately to each published version and alias."
+          }
+        ]
+      },
+      "latency_seconds": 25.34
+    },
+    {
+      "id": "q024",
+      "question": "How does the maximum response payload size differ between a buffered Lambda function URL invocation and a response-streaming one?",
+      "difficulty": "medium",
+      "gold_source_doc": "Configuring functions > Response streaming",
+      "generated_answer": "The maximum response payload size differs between a buffered Lambda function URL invocation and a response-streaming one. \n\nFor buffered Lambda function URL invocations, the maximum payload size is 6 MB. \n\nFor response-streaming Lambda function URL invocations, the maximum response payload size is 200 MB.\n\nSources:\n[1], [3], [4]",
+      "ideal_answer": "Buffered invocations (the default, using the Invoke API) are limited to a 6 MB response payload. Response-streaming invocations, which use the InvokeWithResponseStream API, can return payloads up to 200 MB.",
+      "retrieved_sources": [
+        "Configuring functions > Response streaming",
+        "Configuring functions > Response streaming",
+        "Configuring functions > Response streaming",
+        "Configuring functions > Response streaming"
+      ],
+      "cited_chunk_ids": [
+        "c0225",
+        "c0227",
+        "c0231"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Response streaming"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Response streaming",
+          "Configuring functions > Response streaming",
+          "Configuring functions > Response streaming",
+          "Configuring functions > Response streaming"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it accurately reflects the payload size limits for both buffered and response-streaming Lambda function invocations, as stated in the ideal answer. The assistant also provides the same sources for verification.",
+        "raw_judge_output": "SCORE: 5\n\nREASONING: The assistant's answer is fully correct and complete, as it accurately reflects the payload size limits for both buffered and response-streaming Lambda function invocations, as stated in the ideal answer. The assistant also provides the same sources for verification."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.6666666666666666,
+        "n_citations": 3,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt provides relevant information supporting the answer by stating that response streaming functions can return payloads up to 200 MB, compared to the 6 MB maximum for buffered responses."
+          },
+          {
+            "supported": false,
+            "reasoning": "VERDICT: NO\nREACTION: The excerpt does not provide the specific maximum payload sizes for buffered and response-streaming Lambda function URL invocations, which are essential facts in the answer."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides specific details about the maximum payload sizes for buffered and response-streaming Lambda function URL invocations, which supports the answer's claim about the difference in payload sizes between the two invoke modes."
+          }
+        ]
+      },
+      "latency_seconds": 28.34
+    },
+    {
+      "id": "q025",
+      "question": "If a Lambda function attached to a VPC needs to use response streaming, why can't you rely on its function URL, and what must you set up instead to stream responses privately?",
+      "difficulty": "hard",
+      "gold_source_doc": "Configuring functions > Response streaming ; Configuring functions > Inbound networking",
+      "generated_answer": "Because Lambda function URLs do not support response streaming within a VPC environment, you can't rely on its function URL to stream responses privately. Instead, you must set up an interface VPC endpoint for Lambda to enable communication between your resources in the VPC and the Lambda service.\n\nCitations: [3], [4]",
+      "ideal_answer": "Lambda function URLs do not support response streaming for functions running inside a VPC. Instead, you must invoke the function through the AWS SDK using the InvokeWithResponseStream API, and for traffic to stay off the public internet you need to create an interface VPC endpoint for Lambda (powered by AWS PrivateLink) so VPC resources can reach the Lambda service privately.",
+      "retrieved_sources": [
+        "Configuring functions > Response streaming",
+        "Configuring functions > Response streaming",
+        "Configuring functions > Response streaming",
+        "Configuring functions > Response streaming"
+      ],
+      "cited_chunk_ids": [
+        "c0227",
+        "c0225"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 0.5,
+        "gold_sources": [
+          "Configuring functions > Response streaming",
+          "Configuring functions > Inbound networking"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Response streaming",
+          "Configuring functions > Response streaming",
+          "Configuring functions > Response streaming",
+          "Configuring functions > Response streaming"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies that Lambda function URLs do not support response streaming within a VPC and that an interface VPC endpoint is needed. However, the assistant's answer lacks the specific mention of using the InvokeWithResponseStream API and the role of AWS PrivateLink in providing this endpoint, which are important details included in the ideal answer.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer correctly identifies that Lambda function URLs do not support response streaming within a VPC and that an interface VPC endpoint is needed. However, the assistant's answer lacks the specific mention of using the InvokeWithResponseStream API and the role of AWS PrivateLink in providing this endpoint, which are important details included in the ideal answer."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt directly supports the answer by stating that Lambda function URLs do not support response streaming within a VPC environment and that an interface VPC endpoint is required for streaming."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt contradicts the answer by stating that Lambda functions can natively stream response payloads back to clients through Lambda function URLs or the InvokeWithResponseStream API, which is not possible within a VPC environment as the answer claims."
+          }
+        ]
+      },
+      "latency_seconds": 28.09
+    },
+    {
+      "id": "q026",
+      "question": "How does a Lambda function authenticate a request to its local metadata endpoint, and what piece of information does the endpoint return?",
+      "difficulty": "medium",
+      "gold_source_doc": "Configuring functions > Metadata endpoint",
+      "generated_answer": "A Lambda function authenticates a request to its local metadata endpoint by using an environment variable called `AWS_XRAY_CONTEXT_MISSING`, which is set to `LOG_ERROR` by default. The endpoint returns metadata in a simple JSON format.\n\nCitations: [1], [3]",
+      "ideal_answer": "The function includes an Authorization header using the Bearer scheme with the token from the AWS_LAMBDA_METADATA_TOKEN environment variable, a unique token that Lambda generates automatically for each execution environment at initialization. The endpoint returns a JSON body containing the AvailabilityZoneID of the execution environment.",
+      "retrieved_sources": [
+        "Configuring functions > Environment variables",
+        "Permissions > Execution role",
+        "Configuring functions > Metadata endpoint",
+        "Configuring functions > Inbound networking"
+      ],
+      "cited_chunk_ids": [
+        "c0135",
+        "c0238"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Configuring functions > Metadata endpoint"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Environment variables",
+          "Permissions > Execution role",
+          "Configuring functions > Metadata endpoint",
+          "Configuring functions > Inbound networking"
+        ]
+      },
+      "answer_relevance": {
+        "score": 2,
+        "reasoning": "The assistant's answer is incorrect and incomplete. It mentions an `AWS_XRAY_CONTEXT_MISSING` environment variable, which is not related to authentication for the local metadata endpoint. Additionally, the assistant fails to mention the use of the Bearer scheme with the `AWS_LAMBDA_METADATA_TOKEN` for authentication, which is a crucial detail from the ideal answer. The assistant also incorrectly states that the endpoint returns metadata in a simple JSON format without specifying the AvailabilityZoneID, which is the specific piece of information returned by the endpoint according to the ideal answer.",
+        "raw_judge_output": "SCORE: 2\nREASONING: The assistant's answer is incorrect and incomplete. It mentions an `AWS_XRAY_CONTEXT_MISSING` environment variable, which is not related to authentication for the local metadata endpoint. Additionally, the assistant fails to mention the use of the Bearer scheme with the `AWS_LAMBDA_METADATA_TOKEN` for authentication, which is a crucial detail from the ideal answer. The assistant also incorrectly states that the endpoint returns metadata in a simple JSON format without specifying the AvailabilityZoneID, which is the specific piece of information returned by the endpoint according to the ideal answer."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not provide relevant information about how AWS Lambda authenticates requests to its local metadata endpoint using the `AWS_XRAY_CONTEXT_MISSING` environment variable."
+          },
+          {
+            "supported": false,
+            "reasoning": "The excerpt discusses the Lambda metadata endpoint and how to access it using Powertools for AWS Lambda, but it does not mention anything about authentication, the `AWS_XRAY_CONTEXT_MISSING` environment variable, or the endpoint returning metadata in a simple JSON format."
+          }
+        ]
+      },
+      "latency_seconds": 25.79
+    },
+    {
+      "id": "q027",
+      "question": "By default, what is the total concurrency limit across all of a Lambda account's functions in a single Region?",
+      "difficulty": "easy",
+      "gold_source_doc": "Function scaling > Understanding and visualizing concurrency",
+      "generated_answer": "The total concurrency limit across all of a Lambda account's functions in a single Region is 1,000 concurrent executions.\n\nCitations: [4]",
+      "ideal_answer": "By default, an AWS account has a total concurrency limit of 1,000 concurrent executions across all functions in a Region.",
+      "retrieved_sources": [
+        "Function scaling > Concurrency quotas",
+        "Function scaling > Scaling behavior",
+        "Function scaling > Concurrency quotas",
+        "Function scaling > Understanding and visualizing concurrency"
+      ],
+      "cited_chunk_ids": [
+        "c0245"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Function scaling > Understanding and visualizing concurrency"
+        ],
+        "retrieved_sources": [
+          "Function scaling > Concurrency quotas",
+          "Function scaling > Scaling behavior",
+          "Function scaling > Concurrency quotas",
+          "Function scaling > Understanding and visualizing concurrency"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it accurately states the default concurrency limit of 1,000 concurrent executions across all functions in a single AWS Region, which matches the factual content of the ideal answer. The answer also includes the appropriate citation, which supports the factual accuracy of the response.",
+        "raw_judge_output": "SCORE: 5\n\nREASONING: The assistant's answer is fully correct and complete, as it accurately states the default concurrency limit of 1,000 concurrent executions across all functions in a single AWS Region, which matches the factual content of the ideal answer. The answer also includes the appropriate citation, which supports the factual accuracy of the response."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 1,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt supports the part of the answer that states the total concurrency limit across all of a Lambda account's functions in a single Region is 1,000 concurrent executions."
+          }
+        ]
+      },
+      "latency_seconds": 24.27
+    },
+    {
+      "id": "q028",
+      "question": "If a function receives 200 requests per second on average and each request takes 250 ms to process, what is its concurrency?",
+      "difficulty": "easy",
+      "gold_source_doc": "Function scaling > Calculating concurrency for a function",
+      "generated_answer": "The average function duration is 250 ms, or 0.25 seconds. Using the concurrency formula, you can plug in the numbers to get a concurrency of 800:\nConcurrency = (200 requests/second) * (0.25 second/request) = 800\n\nSources:\n[2], [3]",
+      "ideal_answer": "Concurrency = 200 requests/second x 0.25 seconds/request = 50.",
+      "retrieved_sources": [
+        "Function scaling > Understanding reserved and provisioned concurrency",
+        "Function scaling > Calculating concurrency for a function",
+        "Function scaling > Calculating concurrency for a function",
+        "Function scaling > Concurrency quotas"
+      ],
+      "cited_chunk_ids": [
+        "c0249",
+        "c0250"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Function scaling > Calculating concurrency for a function"
+        ],
+        "retrieved_sources": [
+          "Function scaling > Understanding reserved and provisioned concurrency",
+          "Function scaling > Calculating concurrency for a function",
+          "Function scaling > Calculating concurrency for a function",
+          "Function scaling > Concurrency quotas"
+        ]
+      },
+      "answer_relevance": {
+        "score": 1,
+        "reasoning": "The assistant's answer is incorrect because it misinterprets the concurrency calculation. Concurrency refers to the number of instances of a function that are running simultaneously, not the product of requests per second and request duration. The ideal answer correctly identifies the concurrency as 50, which is the number of requests that can be processed in parallel at any given time.",
+        "raw_judge_output": "SCORE: 1\nREASONING: The assistant's answer is incorrect because it misinterprets the concurrency calculation. Concurrency refers to the number of instances of a function that are running simultaneously, not the product of requests per second and request duration. The ideal answer correctly identifies the concurrency as 50, which is the number of requests that can be processed in parallel at any given time."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant evidence supporting the calculation of concurrency using the given formula and average request duration."
+          },
+          {
+            "supported": false,
+            "reasoning": "The excerpt discusses a scenario with different request durations and concurrency, which does not directly support the provided answer's specific calculation of concurrency based on a 250 ms average function duration."
+          }
+        ]
+      },
+      "latency_seconds": 25.95
+    },
+    {
+      "id": "q029",
+      "question": "What's the core functional difference between reserved concurrency and provisioned concurrency in Lambda?",
+      "difficulty": "medium",
+      "gold_source_doc": "Function scaling > Understanding reserved and provisioned concurrency",
+      "generated_answer": "The core functional difference between reserved concurrency and provisioned concurrency in Lambda is that reserved concurrency acts as both a lower and upper bound, reserving the specified capacity exclusively for your function while preventing it from scaling beyond that limit. Provisioned concurrency, on the other hand, is the number of pre-initialized execution environments allocated to your function, which are ready to respond immediately to incoming function requests.\n\nCitations: [1], [2], [3]",
+      "ideal_answer": "Reserved concurrency sets both a maximum and minimum number of concurrent instances reserved exclusively for a function out of the account's concurrency pool, but it doesn't pre-initialize anything, so the function can still experience cold starts. Provisioned concurrency instead pre-initializes a specified number of execution environments so they're ready to respond immediately, reducing cold starts, but by itself it doesn't cap how much additional on-demand concurrency the function can use.",
+      "retrieved_sources": [
+        "Function scaling > Configuring provisioned concurrency",
+        "Function scaling > Configuring reserved concurrency",
+        "Function scaling > Understanding reserved and provisioned concurrency",
+        "Function scaling > Understanding reserved and provisioned concurrency"
+      ],
+      "cited_chunk_ids": [
+        "c0274",
+        "c0269",
+        "c0257"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Function scaling > Understanding reserved and provisioned concurrency"
+        ],
+        "retrieved_sources": [
+          "Function scaling > Configuring provisioned concurrency",
+          "Function scaling > Configuring reserved concurrency",
+          "Function scaling > Understanding reserved and provisioned concurrency",
+          "Function scaling > Understanding reserved and provisioned concurrency"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies that reserved concurrency sets a limit on the number of concurrent instances and that provisioned concurrency pre-initializes execution environments. However, the assistant's answer omits the critical detail that provisioned concurrency does not cap additional on-demand concurrency usage, which is an important aspect of the difference between the two.",
+        "raw_judge_output": "SCORE: 4\n\nREASONING: The assistant's answer correctly identifies that reserved concurrency sets a limit on the number of concurrent instances and that provisioned concurrency pre-initializes execution environments. However, the assistant's answer omits the critical detail that provisioned concurrency does not cap additional on-demand concurrency usage, which is an important aspect of the difference between the two."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.6666666666666666,
+        "n_citations": 3,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt directly supports the answer by explaining that reserved concurrency sets both a maximum and minimum number of concurrent instances for a function, reserving capacity exclusively for the function and preventing it from scaling beyond that limit."
+          },
+          {
+            "supported": true,
+            "reasoning": "Verdict: YES\n\nReasoning: The excerpt directly supports the answer by explaining that reserved concurrency sets both a maximum and minimum number of concurrent instances for a function, reserving capacity exclusively for the function while preventing it from scaling beyond that limit."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not provide evidence about the core functional difference between reserved concurrency and provisioned concurrency, which is a key aspect of the answer. It only provides a partial explanation of how provisioned concurrency works and does not discuss reserved concurrency."
+          }
+        ]
+      },
+      "latency_seconds": 29.96
+    },
+    {
+      "id": "q030",
+      "question": "Lambda SnapStart and provisioned concurrency both exist to reduce cold-start latency, but you can't enable both on the same function version. Using what each mechanism actually does, explain why they're mutually exclusive and which runtimes get the free option.",
+      "difficulty": "hard",
+      "gold_source_doc": "Core concepts > Running code ; Function scaling > Understanding reserved and provisioned concurrency",
+      "generated_answer": "Lambda SnapStart and provisioned concurrency both aim to reduce cold-start latency, but they work in different ways and cannot be used together on the same function version.\n\nLambda SnapStart uses cached snapshots of the execution environment to improve startup performance, essentially bypassing the need to initialize the environment from scratch on every invocation. This is done at no additional cost for Java 11 and Java 17 runtimes.\n\nProvisioned concurrency, on the other hand, pre-initializes a set number of execution environments ahead of time, making them ready to respond immediately to incoming function requests. This is useful for interactive workloads that are sensitive to latency.\n\nThe reason they're mutually exclusive is that provisioned concurrency requires the execution environment to be pre-initialized, which is exactly what SnapStart aims to avoid by caching snapshots. If both mechanisms were enabled, the cached snapshots would be overwritten by the pre-initialized environments, negating the benefits of both.\n\nThe free option, SnapStart, is available for Java 11 and Java 17 runtimes, while provisioned concurrency is available for all runtimes.\n\nCitations: [2], [3]",
+      "ideal_answer": "SnapStart reduces cold starts by resuming new execution environments from a persisted, encrypted memory-and-disk snapshot taken during a special Restore phase, instead of running full initialization from scratch. Provisioned concurrency reduces cold starts by keeping a specified number of execution environments pre-initialized and ready in advance. Because both are alternative solutions to the same cold-start problem, Lambda doesn't allow configuring them together on one function version. SnapStart is available at no extra cost for the Java 11 and Java 17 runtimes, while provisioned concurrency incurs additional charges regardless of runtime.",
+      "retrieved_sources": [
+        "Function scaling > Understanding reserved and provisioned concurrency",
+        "Function scaling > Configuring provisioned concurrency",
+        "Function scaling > Configuring provisioned concurrency",
+        "Function scaling > Understanding reserved and provisioned concurrency"
+      ],
+      "cited_chunk_ids": [
+        "c0274",
+        "c0280"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.5,
+        "recall_at_k": 0.5,
+        "gold_sources": [
+          "Core concepts > Running code",
+          "Function scaling > Understanding reserved and provisioned concurrency"
+        ],
+        "retrieved_sources": [
+          "Function scaling > Understanding reserved and provisioned concurrency",
+          "Function scaling > Configuring provisioned concurrency",
+          "Function scaling > Configuring provisioned concurrency",
+          "Function scaling > Understanding reserved and provisioned concurrency"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer fully captures the key points of the ideal answer, explaining the mechanisms of SnapStart and provisioned concurrency, their mutual exclusivity, and the availability of the free option for Java 11 and Java 17 runtimes. The answer is comprehensive, accurate, and directly addresses the question's requirements.",
+        "raw_judge_output": "SCORE: 5\nREASONING: The assistant's answer fully captures the key points of the ideal answer, explaining the mechanisms of SnapStart and provisioned concurrency, their mutual exclusivity, and the availability of the free option for Java 11 and Java 17 runtimes. The answer is comprehensive, accurate, and directly addresses the question's requirements."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about provisioned concurrency, which supports the part of the answer discussing its purpose and functionality, and implicitly contrasts it with Lambda SnapStart by highlighting its immediate response capability."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReason: The excerpt discusses the concept of cold starts and how to avoid them, but it does not provide specific evidence about how Lambda SnapStart and provisioned concurrency work, nor does it explain why they cannot be used together on the same function version."
+          }
+        ]
+      },
+      "latency_seconds": 41.98
+    },
+    {
+      "id": "q031",
+      "question": "A function averaging 50 ms per request needs to handle 20,000 requests per second at peak, giving it a calculated concurrency of 1,000 — exactly the default account concurrency limit. Why might it still get throttled, and what change would fix it?",
+      "difficulty": "hard",
+      "gold_source_doc": "Function scaling > Understanding concurrency and requests per second ; Function scaling > Concurrency quotas",
+      "generated_answer": "The function might still get throttled because the requests per second limit (10,000) is less than the total requests per second (20,000). To fix this, the account concurrency limit would need to be increased to at least 1,000.\n\nCitations: [3]",
+      "ideal_answer": "Even though the concurrency of 1,000 matches the default account concurrency limit, Lambda also enforces a requests-per-second limit equal to 10 times the account concurrency limit (10,000 RPS by default), and 20,000 requests/second exceeds that ceiling, so the function throttles. You would need to request an account concurrency limit increase to 2,000, which would raise the requests-per-second limit to 20,000 and fully accommodate the load.",
+      "retrieved_sources": [
+        "Function scaling > Understanding concurrency and requests per second",
+        "Function scaling > Concurrency quotas",
+        "Function scaling > Understanding concurrency and requests per second",
+        "Function scaling > Concurrency quotas"
+      ],
+      "cited_chunk_ids": [
+        "c0263"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Function scaling > Understanding concurrency and requests per second",
+          "Function scaling > Concurrency quotas"
+        ],
+        "retrieved_sources": [
+          "Function scaling > Understanding concurrency and requests per second",
+          "Function scaling > Concurrency quotas",
+          "Function scaling > Understanding concurrency and requests per second",
+          "Function scaling > Concurrency quotas"
+        ]
+      },
+      "answer_relevance": {
+        "score": 2,
+        "reasoning": "The assistant's answer is mostly incorrect because it fails to mention the requests-per-second limit, which is a crucial factor in understanding why the function might still get throttled. The assistant also incorrectly suggests increasing the account concurrency limit to 1,000, which would not raise the requests-per-second limit to accommodate the load. The correct action would be to request an account concurrency limit increase to 2,000, which would raise the requests-per-second limit to 20,000.",
+        "raw_judge_output": "SCORE: 2\nREASONING: The assistant's answer is mostly incorrect because it fails to mention the requests-per-second limit, which is a crucial factor in understanding why the function might still get throttled. The assistant also incorrectly suggests increasing the account concurrency limit to 1,000, which would not raise the requests-per-second limit to accommodate the load. The correct action would be to request an account concurrency limit increase to 2,000, which would raise the requests-per-second limit to 20,000."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 1,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt explains how AWS Lambda enforces a requests per second limit based on account concurrency, supporting the assistant's claim that increasing the account concurrency limit is necessary to handle more requests per second."
+          }
+        ]
+      },
+      "latency_seconds": 23.14
+    },
+    {
+      "id": "q032",
+      "question": "By default, how much of the account's concurrency pool can a single function reserve, and why is that number lower than the full account limit?",
+      "difficulty": "medium",
+      "gold_source_doc": "Function scaling > Concurrency quotas",
+      "generated_answer": "By default, a single function can reserve up to 400 units of the account's concurrency pool. This is because the diagram in excerpt [1] shows that the account concurrency limit is 1,000, and the two critical functions, function-blue and function-orange, are allocated 400 units of reserved concurrency each, leaving 200 units of unreserved concurrency for other functions.\n\nCitations: [1]",
+      "ideal_answer": "By default you can reserve up to 900 units of concurrency for a single function, because Lambda always holds back a minimum of 100 units of unreserved concurrency for functions that don't explicitly reserve any, out of the default 1,000-unit account concurrency limit.",
+      "retrieved_sources": [
+        "Function scaling > Understanding reserved and provisioned concurrency",
+        "Function scaling > Understanding reserved and provisioned concurrency",
+        "Function scaling > Understanding concurrency and requests per second",
+        "Function scaling > Understanding reserved and provisioned concurrency"
+      ],
+      "cited_chunk_ids": [
+        "c0253"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "gold_sources": [
+          "Function scaling > Concurrency quotas"
+        ],
+        "retrieved_sources": [
+          "Function scaling > Understanding reserved and provisioned concurrency",
+          "Function scaling > Understanding reserved and provisioned concurrency",
+          "Function scaling > Understanding concurrency and requests per second",
+          "Function scaling > Understanding reserved and provisioned concurrency"
+        ]
+      },
+      "answer_relevance": {
+        "score": 2,
+        "reasoning": "The assistant's answer is incorrect because it misstates the default concurrency limit and the allocation of reserved concurrency. The ideal answer correctly states that by default, a single function can reserve up to 900 units of concurrency, with 100 units always held back as unreserved concurrency. The assistant's answer incorrectly states that the default concurrency limit is 1,000 units and that two specific functions reserve 400 units each, which is not mentioned in the ideal answer.",
+        "raw_judge_output": "SCORE: 2\nREASONING: The assistant's answer is incorrect because it misstates the default concurrency limit and the allocation of reserved concurrency. The ideal answer correctly states that by default, a single function can reserve up to 900 units of concurrency, with 100 units always held back as unreserved concurrency. The assistant's answer incorrectly states that the default concurrency limit is 1,000 units and that two specific functions reserve 400 units each, which is not mentioned in the ideal answer."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 1,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about the default account concurrency limit and the allocation of reserved concurrency to critical functions, which supports the part of the answer regarding the default concurrency limit and the reserved concurrency for function-blue and function-orange."
+          }
+        ]
+      },
+      "latency_seconds": 26.64
+    },
+    {
+      "id": "q033",
+      "question": "How can you intentionally stop a Lambda function from processing any events using its reserved concurrency setting?",
+      "difficulty": "easy",
+      "gold_source_doc": "Function scaling > Configuring reserved concurrency",
+      "generated_answer": "To intentionally stop a Lambda function from processing any events using its reserved concurrency setting, you need to set its reserved concurrency to 0.\n\nCitations: [1], [3]",
+      "ideal_answer": "Set the function's reserved concurrency to 0. This throttles the function so it stops processing events entirely until you remove or change the limit.",
+      "retrieved_sources": [
+        "Function scaling > Configuring reserved concurrency",
+        "Function scaling > Configuring reserved concurrency",
+        "Function scaling > Understanding reserved and provisioned concurrency",
+        "Function scaling > Configuring provisioned concurrency"
+      ],
+      "cited_chunk_ids": [
+        "c0271",
+        "c0262"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.5,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Function scaling > Configuring reserved concurrency"
+        ],
+        "retrieved_sources": [
+          "Function scaling > Configuring reserved concurrency",
+          "Function scaling > Configuring reserved concurrency",
+          "Function scaling > Understanding reserved and provisioned concurrency",
+          "Function scaling > Configuring provisioned concurrency"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it directly matches the ideal answer's facts and provides the same explanation regarding setting the reserved concurrency to 0 to stop the Lambda function from processing events. The citations are not necessary for this evaluation as the answer is factually accurate and complete.",
+        "raw_judge_output": "SCORE: 5\nREASONING: The assistant's answer is fully correct and complete, as it directly matches the ideal answer's facts and provides the same explanation regarding setting the reserved concurrency to 0 to stop the Lambda function from processing events. The citations are not necessary for this evaluation as the answer is factually accurate and complete."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt directly supports the answer by explaining that setting a function's reserved concurrency to 0 will intentionally throttle the function, aligning with the answer's claim."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt supports the answer by explaining that setting the reserved concurrency to 0 will result in the function being throttled when the reserved concurrency limit is reached."
+          }
+        ]
+      },
+      "latency_seconds": 20.25
+    },
+    {
+      "id": "q034",
+      "question": "If the ProvisionedConcurrencySpilloverInvocations metric is consistently high for a function, what does that indicate, and how could you confirm which concurrency type served a specific invocation from inside the function's own code?",
+      "difficulty": "hard",
+      "gold_source_doc": "Function scaling > Monitoring concurrency ; Function scaling > Configuring provisioned concurrency",
+      "generated_answer": "If the ProvisionedConcurrencySpilloverInvocations metric is consistently high for a function, that indicates that the function is invoking standard (reserved or unreserved) concurrency more often than the provisioned concurrency is in use.\n\nTo confirm which concurrency type served a specific invocation from inside the function's own code, you would need to check the function's invocation metrics, such as ProvisionedConcurrencyInvocations and Invocations, to determine which type of concurrency was used for that specific invocation.\n\nCitations: [2], [4]",
+      "ideal_answer": "A high ProvisionedConcurrencySpilloverInvocations value means the function has used up all of its allocated provisioned concurrency and Lambda is falling back to standard (reserved or unreserved) concurrency to handle the overflow, which may indicate you need to allocate more provisioned concurrency. From inside the function, you can check the AWS_LAMBDA_INITIALIZATION_TYPE environment variable, which reports either provisioned-concurrency or on-demand for that execution environment.",
+      "retrieved_sources": [
+        "Function scaling > Monitoring concurrency",
+        "Function scaling > Monitoring concurrency",
+        "Function scaling > Monitoring concurrency",
+        "Function scaling > Monitoring concurrency"
+      ],
+      "cited_chunk_ids": [
+        "c0293",
+        "c0295"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 0.5,
+        "gold_sources": [
+          "Function scaling > Monitoring concurrency",
+          "Function scaling > Configuring provisioned concurrency"
+        ],
+        "retrieved_sources": [
+          "Function scaling > Monitoring concurrency",
+          "Function scaling > Monitoring concurrency",
+          "Function scaling > Monitoring concurrency",
+          "Function scaling > Monitoring concurrency"
+        ]
+      },
+      "answer_relevance": {
+        "score": 2,
+        "reasoning": "The assistant's answer is mostly incorrect because it misinterprets the meaning of a high ProvisionedConcurrencySpilloverInvocations metric. The ideal answer correctly states that a high value indicates the function is using standard concurrency more often, not invoking it more frequently. Additionally, the assistant's answer omits the correct method of checking the AWS_LAMBDA_INITIALIZATION_TYPE environment variable to determine the concurrency type for a specific invocation.",
+        "raw_judge_output": "SCORE: 2\nREASONING: The assistant's answer is mostly incorrect because it misinterprets the meaning of a high ProvisionedConcurrencySpilloverInvocations metric. The ideal answer correctly states that a high value indicates the function is using standard concurrency more often, not invoking it more frequently. Additionally, the assistant's answer omits the correct method of checking the AWS_LAMBDA_INITIALIZATION_TYPE environment variable to determine the concurrency type for a specific invocation."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.0,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not provide evidence about the invocation metrics needed to confirm which concurrency type served a specific invocation."
+          },
+          {
+            "supported": false,
+            "reasoning": "The excerpt does not provide evidence about the consistency of high ProvisionedConcurrencySpilloverInvocations or how to confirm the concurrency type for a specific invocation."
+          }
+        ]
+      },
+      "latency_seconds": 29.25
+    },
+    {
+      "id": "q035",
+      "question": "What status code do Lambda invocations receive when a function hits its maximum concurrency or requests arrive faster than it can scale?",
+      "difficulty": "easy",
+      "gold_source_doc": "Function scaling > Scaling behavior",
+      "generated_answer": "The status code that Lambda invocations receive when a function hits its maximum concurrency or requests arrive faster than it can scale is 429.\n\nCitations: [3]",
+      "ideal_answer": "Additional requests fail with a throttling error, returned as a 429 status code.",
+      "retrieved_sources": [
+        "Core concepts > Running code",
+        "Function scaling > Understanding and visualizing concurrency",
+        "Function scaling > Scaling behavior",
+        "Function scaling > Understanding and visualizing concurrency"
+      ],
+      "cited_chunk_ids": [
+        "c0289"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.25,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Function scaling > Scaling behavior"
+        ],
+        "retrieved_sources": [
+          "Core concepts > Running code",
+          "Function scaling > Understanding and visualizing concurrency",
+          "Function scaling > Scaling behavior",
+          "Function scaling > Understanding and visualizing concurrency"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it accurately states that a 429 status code is returned when a Lambda function hits its maximum concurrency or requests arrive faster than it can scale. The citation provided supports this factual content.",
+        "raw_judge_output": "SCORE: 5\n\nREASONING: The assistant's answer is fully correct and complete, as it accurately states that a 429 status code is returned when a Lambda function hits its maximum concurrency or requests arrive faster than it can scale. The citation provided supports this factual content."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 1,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt supports the part of the answer that states a 429 status code is returned when the function hits its maximum concurrency or requests arrive faster than it can scale."
+          }
+        ]
+      },
+      "latency_seconds": 22.23
+    },
+    {
+      "id": "q036",
+      "question": "What must a Lambda execution role's trust policy specify before Lambda is able to assume that role?",
+      "difficulty": "medium",
+      "gold_source_doc": "Permissions > Execution role",
+      "generated_answer": "A Lambda execution role's trust policy must specify the Lambda service principal (lambda.amazonaws.com) as a trusted service.\n\nCitations: [3]",
+      "ideal_answer": "The trust policy must specify the Lambda service principal, lambda.amazonaws.com, as a trusted service so that Lambda is permitted to assume the role when a function is invoked.",
+      "retrieved_sources": [
+        "Permissions > Execution role",
+        "Core concepts > Core concepts overview",
+        "Permissions > Execution role",
+        "Permissions > Execution role"
+      ],
+      "cited_chunk_ids": [
+        "c0303"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.75,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Permissions > Execution role"
+        ],
+        "retrieved_sources": [
+          "Permissions > Execution role",
+          "Core concepts > Core concepts overview",
+          "Permissions > Execution role",
+          "Permissions > Execution role"
+        ]
+      },
+      "answer_relevance": {
+        "score": 5,
+        "reasoning": "The assistant's answer is fully correct and complete, as it accurately states that the trust policy must specify the Lambda service principal (lambda.amazonaws.com) as a trusted service, which is exactly what the ideal answer indicates. The assistant's answer matches the ideal answer's facts and provides the necessary detail for a full understanding of the requirement.",
+        "raw_judge_output": "SCORE: 5\n\nREASONING: The assistant's answer is fully correct and complete, as it accurately states that the trust policy must specify the Lambda service principal (lambda.amazonaws.com) as a trusted service, which is exactly what the ideal answer indicates. The assistant's answer matches the ideal answer's facts and provides the necessary detail for a full understanding of the requirement."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 1,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about the trust policy for a Lambda execution role, which must specify the Lambda service principal as a trusted service, as stated in the answer."
+          }
+        ]
+      },
+      "latency_seconds": 22.09
+    },
+    {
+      "id": "q037",
+      "question": "What's the practical difference between using PutResourcePolicy and AddPermission to grant another service access to invoke your function, and how does that compare to how the execution role's trust policy is scoped?",
+      "difficulty": "hard",
+      "gold_source_doc": "Permissions > Access permissions ; Permissions > Execution role",
+      "generated_answer": "Using PutResourcePolicy and AddPermission both grant access to invoke a function, but they differ in how they handle existing permissions.\n\nPutResourcePolicy replaces any existing resource-based policy on the resource, which means it overwrites any existing permissions. This can be a security risk if the existing permissions are not intended to be overwritten.\n\nAddPermission, on the other hand, adds a new permission to the existing policy, without replacing it. This allows you to build upon existing permissions, rather than overwriting them.\n\nIn contrast, the execution role's trust policy is scoped to the specific role, and is not directly related to granting access to invoke a function. The trust policy defines the roles that can assume the execution role, and the permissions that are granted to those roles.\n\nSources:\n[2], [3], [4]",
+      "ideal_answer": "PutResourcePolicy replaces the function's entire resource-based policy document, so it can silently overwrite permissions that were previously added with AddPermission; AddPermission instead appends a single Allow statement onto the existing policy without disturbing the rest of it. This is a distinct mechanism from the execution role's trust policy, which only needs to name the Lambda service principal (lambda.amazonaws.com) as a trusted entity so Lambda can assume the role — the trust policy controls who can assume the role, not who can invoke the function.",
+      "retrieved_sources": [
+        "Permissions > Access permissions",
+        "Permissions > Access permissions",
+        "Permissions > Access permissions",
+        "Permissions > Execution role"
+      ],
+      "cited_chunk_ids": [
+        "c0338",
+        "c0345",
+        "c0303"
+      ],
+      "retrieval": {
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "gold_sources": [
+          "Permissions > Access permissions",
+          "Permissions > Execution role"
+        ],
+        "retrieved_sources": [
+          "Permissions > Access permissions",
+          "Permissions > Access permissions",
+          "Permissions > Access permissions",
+          "Permissions > Execution role"
+        ]
+      },
+      "answer_relevance": {
+        "score": 4,
+        "reasoning": "The assistant's answer correctly identifies that PutResourcePolicy replaces the entire resource-based policy, which can overwrite existing permissions, and AddPermission appends a new permission without disturbing the rest of the policy. However, the assistant's explanation about the execution role's trust policy is not entirely accurate, as it does not clearly state that the trust policy only names the Lambda service principal as a trusted entity, which is essential for understanding its scope and purpose.",
+        "raw_judge_output": "SCORE: 4\nREASONING: The assistant's answer correctly identifies that PutResourcePolicy replaces the entire resource-based policy, which can overwrite existing permissions, and AddPermission appends a new permission without disturbing the rest of the policy. However, the assistant's explanation about the execution role's trust policy is not entirely accurate, as it does not clearly state that the trust policy only names the Lambda service principal as a trusted entity, which is essential for understanding its scope and purpose."
+      },
+      "citation_accuracy": {
+        "accuracy": 1.0,
+        "n_citations": 3,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant evidence supporting the difference in how PutResourcePolicy and AddPermission handle existing permissions, with PutResourcePolicy replacing existing policies and AddPermission adding to them without replacement."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant evidence supporting the difference in how PutResourcePolicy and AddPermission handle existing permissions, with PutResourcePolicy replacing existing policies and AddPermission adding to them without replacement."
+          },
+          {
+            "supported": true,
+            "reasoning": "The excerpt provides relevant information about the execution role and its permissions, which supports the answer's distinction between PutResourcePolicy and AddPermission in terms of handling existing permissions."
+          }
+        ]
+      },
+      "latency_seconds": 32.23
+    },
+    {
+      "id": "q038",
+      "question": "Can a function packaged as a container image use self-managed S3 code storage to avoid Lambda's storage quota? If not, where does its code actually live?",
+      "difficulty": "hard",
+      "gold_source_doc": "Configuring functions > Container images ; Configuring functions > Self-managed S3 code storage",
+      "generated_answer": "Yes, a function packaged as a container image can use self-managed S3 code storage to avoid Lambda's storage quota. Its code actually lives in an S3 bucket in the same account, and Lambda reads the code from the S3 bucket during function creation and update operations, without storing a separate copy in Lambda-managed storage.\n\nCitations: [2], [3]",
+      "ideal_answer": "No. Self-managed S3 code storage is available only for functions and layers created and updated using .zip file archives; container image functions continue to use Amazon ECR, and Lambda periodically fetches the associated image from the ECR repository to keep the function active.",
+      "retrieved_sources": [
+        "Configuring functions > Configuring functions overview",
+        "Configuring functions > Self-managed S3 code storage",
+        "Configuring functions > Self-managed S3 code storage",
+        "Configuring functions > .zip file archives"
+      ],
+      "cited_chunk_ids": [
+        "c0103",
+        "c0109"
+      ],
+      "retrieval": {
+        "precision_at_k": 0.5,
+        "recall_at_k": 0.5,
+        "gold_sources": [
+          "Configuring functions > Container images",
+          "Configuring functions > Self-managed S3 code storage"
+        ],
+        "retrieved_sources": [
+          "Configuring functions > Configuring functions overview",
+          "Configuring functions > Self-managed S3 code storage",
+          "Configuring functions > Self-managed S3 code storage",
+          "Configuring functions > .zip file archives"
+        ]
+      },
+      "answer_relevance": {
+        "score": 1,
+        "reasoning": "The assistant's answer is incorrect as it states that a container image function can use self-managed S3 code storage to avoid Lambda's storage quota, which contradicts the factual content of the ideal answer. The ideal answer correctly states that self-managed S3 code storage is only available for functions and layers created and updated using .zip file archives, not container images. Additionally, the assistant's answer incorrectly suggests that the code lives in an S3 bucket within the same account, which is not the case for container image functions. These functions continue to use Amazon ECR and Lambda fetches the associated image from ECR to keep the function active.",
+        "raw_judge_output": "SCORE: 1\nREASONING: The assistant's answer is incorrect as it states that a container image function can use self-managed S3 code storage to avoid Lambda's storage quota, which contradicts the factual content of the ideal answer. The ideal answer correctly states that self-managed S3 code storage is only available for functions and layers created and updated using .zip file archives, not container images. Additionally, the assistant's answer incorrectly suggests that the code lives in an S3 bucket within the same account, which is not the case for container image functions. These functions continue to use Amazon ECR and Lambda fetches the associated image from ECR to keep the function active."
+      },
+      "citation_accuracy": {
+        "accuracy": 0.5,
+        "n_citations": 2,
+        "per_citation": [
+          {
+            "supported": true,
+            "reasoning": "The excerpt confirms that with self-managed S3 code storage, Lambda does not store a copy of the code, which supports the part of the answer stating that a function using self-managed S3 code storage can avoid Lambda's storage quota."
+          },
+          {
+            "supported": false,
+            "reasoning": "Verdict: NO\nReasoning: The excerpt does not provide relevant supporting evidence for the claim that a function packaged as a container image can use self-managed S3 code storage to avoid Lambda's storage quota, as it specifically states that self-managed S3 code storage is only available for .zip file archive functions and layers, not for container image functions."
+          }
+        ]
+      },
+      "latency_seconds": 26.87
+    }
+  ],
+  "config": {
+    "config_name": "chunk300",
+    "index_dir": "faiss_index_300",
+    "k": 4,
+    "rerank": false,
+    "embedding_model": "nomic-embed-text",
+    "generation_model": "llama3.2:3b",
+    "judge_model": "phi3:mini"
+  }
+}
