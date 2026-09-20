@@ -5,7 +5,6 @@ __pycache__/
 data/raw/*.pdf
 *.faiss
 *.pkl
-faiss_index/
 faiss_index_*/
 .DS_Store
 toc_dump.txt
@@ -14,3 +13,10 @@ heading_search*.txt
 offset_map.txt
 *_run.log
 ablation_*.log
+
+# The production FAISS index (faiss_index/) IS committed - it's small
+# (~1.2MB) and the Dockerfile/HF Space build needs it without having to
+# run Ollama at build/deploy time. Only the ablation indices are ignored.
+!/faiss_index/
+!/faiss_index/*.faiss
+!/faiss_index/*.pkl
