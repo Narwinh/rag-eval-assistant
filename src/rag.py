@@ -25,7 +25,7 @@ from rank_bm25 import BM25Okapi
 INDEX_DIR = Path("faiss_index")
 EMBEDDING_MODEL = "nomic-embed-text"
 GENERATION_MODEL = "llama3.2:3b"
-DEFAULT_K = 4
+DEFAULT_K = 3  # winning config from the Phase 5 ablation sweep - see README results table
 RERANK_FETCH_MULTIPLIER = 4  # when reranking, fetch this many x k candidates before rescoring
 
 # Overridable so the same code works against a local `ollama serve` and

@@ -15,7 +15,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
-from src.rag import RagPipeline
+from src.rag import RagPipeline, DEFAULT_K
 
 pipeline: RagPipeline | None = None
 
@@ -38,7 +38,7 @@ app = FastAPI(
 
 class AskRequest(BaseModel):
     question: str = Field(..., min_length=1, examples=["What is the default timeout for a Lambda function?"])
-    k: int = Field(4, ge=1, le=10, description="Number of chunks to retrieve.")
+    k: int = Field(DEFAULT_K, ge=1, le=10, description="Number of chunks to retrieve.")
 
 
 class Citation(BaseModel):
