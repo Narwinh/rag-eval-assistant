@@ -106,18 +106,22 @@ def answer_relevance(question: str, ideal_answer: str, generated_answer: str) ->
 
 # --- 3. Citation accuracy -----------------------------------------------
 
-CITATION_PROMPT = """An AI assistant made the following claim while answering a question about AWS Lambda, \
-and cited the source excerpt below as support.
+CITATION_PROMPT = """An AI assistant answered a question about AWS Lambda, and cited the source excerpt \
+below as one of (possibly several) sources for its answer. The answer may combine facts from multiple \
+sources, so the excerpt does not need to support the ENTIRE answer by itself - it only needs to \
+provide relevant supporting evidence for AT LEAST PART of the answer's factual content.
 
-Claim (the assistant's answer): {answer}
+Assistant's answer: {answer}
 
 Cited source excerpt:
 \"\"\"
 {source_text}
 \"\"\"
 
-Does the cited excerpt actually support (contain evidence for) the claim? Respond in EXACTLY \
-this format:
+Does this excerpt provide real, relevant supporting evidence for at least part of the answer? Answer \
+NO only if the excerpt is irrelevant, contradicts the answer, or the answer explicitly claims no \
+information was available (in which case an excerpt containing real information does NOT support \
+that "no information" claim). Respond in EXACTLY this format:
 VERDICT: <YES or NO>
 REASONING: <one sentence>"""
 

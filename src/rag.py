@@ -35,10 +35,12 @@ OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
 PROMPT_TEMPLATE = """You are a technical assistant answering questions about AWS Lambda, \
 using ONLY the numbered source excerpts below. Do not use outside knowledge.
 
-If the excerpts don't contain the answer, say "I don't have enough information in the \
-provided sources to answer that."
+If, and only if, NONE of the excerpts contain relevant information, say exactly "I don't have \
+enough information in the provided sources to answer that." and write "Citations: none" - do not \
+cite any sources in that case, since none of them helped.
 
-After your answer, on a new line, list the sources you actually relied on, like:
+Otherwise, answer the question and then, on a new line, list ONLY the sources you actually used, \
+like:
 Citations: [1], [3]
 
 Sources:
