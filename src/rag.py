@@ -22,9 +22,36 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from rank_bm25 import BM25Okapi
 
-INDEX_DIR = Path("faiss_index")
-EMBEDDING_MODEL = "nomic-embed-text"
-GENERATION_MODEL = "llama3.2:3b"
+# --- Backend selection --------------------------------------------------
+#
+# "local" (default): fully self-hosted via Ollama - zero API cost, used for
+#   all development, the eval harness, and `docker run` locally.
+# "hosted": free-tier hosted APIs (Google Gemini, for both generation and
+#   embeddings) instead of Ollama, because the free hosting platforms this
+#   project's live demo runs on (e.g. Render's free web service, 512MB RAM)
+#   don't have enough memory/CPU to run a local LLM server. Same RAG logic,
+#   same eval harness - only the embedding/generation backend differs.
+#   Requires a GOOGLE_API_KEY env var (free key from https://aistudio.google.com).
+#
+# Set via the RAG_BACKEND env var; the two backends use SEPARATE FAISS
+# indices (faiss_index/ vs faiss_index_hosted/) since embedding spaces from
+# different models are not interchangeable.
+BACKEND = os.environ.get("RAG_BACKEND", "local")
+
+
+def _defaults_for_backend(backend: str) -> tuple[Path, str, str]:
+    """(index_dir, embedding_model, generation_model) defaults for a given backend.
+
+    Used both for this module's top-level constants (below, for the current
+    RAG_BACKEND) and inside RagPipeline.__init__ (so passing backend="hosted"
+    explicitly - e.g. from run_eval.py --backend hosted - gets hosted
+    defaults even if RAG_BACKEND itself is still "local")."""
+    if backend == "hosted":
+        return Path("faiss_index_hosted"), "models/gemini-embedding-001", "gemini-3.5-flash-lite"
+    return Path("faiss_index"), "nomic-embed-text", "llama3.2:3b"
+
+
+INDEX_DIR, EMBEDDING_MODEL, GENERATION_MODEL = _defaults_for_backend(BACKEND)
 DEFAULT_K = 3  # winning config from the Phase 5 ablation sweep - see README results table
 RERANK_FETCH_MULTIPLIER = 4  # when reranking, fetch this many x k candidates before rescoring
 
@@ -83,17 +110,36 @@ def _parse_citations(answer: str, docs: list[Document]) -> list[str]:
 class RagPipeline:
     def __init__(
         self,
-        index_dir: Path = INDEX_DIR,
-        embedding_model: str = EMBEDDING_MODEL,
-        generation_model: str = GENERATION_MODEL,
+        index_dir: Path | None = None,
+        embedding_model: str | None = None,
+        generation_model: str | None = None,
         k: int = DEFAULT_K,
         rerank: bool = False,
+        backend: str = BACKEND,
     ):
-        self.embeddings = OllamaEmbeddings(model=embedding_model, base_url=OLLAMA_BASE_URL)
+        # Resolve backend-specific defaults from the `backend` actually passed
+        # in here, NOT from the module-level constants above (which reflect
+        # RAG_BACKEND at import time) - otherwise RagPipeline(backend="hosted")
+        # would silently keep using local (Ollama) index/model defaults.
+        default_index_dir, default_embedding_model, default_generation_model = _defaults_for_backend(backend)
+        index_dir = index_dir or default_index_dir
+        embedding_model = embedding_model or default_embedding_model
+        generation_model = generation_model or default_generation_model
+
+        if backend == "hosted":
+            # Imported lazily so `langchain-google-genai` is only required
+            # when actually running in hosted mode.
+            from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+
+            self.embeddings = GoogleGenerativeAIEmbeddings(model=embedding_model)
+            self.llm = ChatGoogleGenerativeAI(model=generation_model, temperature=0)
+        else:
+            self.embeddings = OllamaEmbeddings(model=embedding_model, base_url=OLLAMA_BASE_URL)
+            self.llm = ChatOllama(model=generation_model, temperature=0, base_url=OLLAMA_BASE_URL)
+
         self.vectorstore = FAISS.load_local(
             str(index_dir), self.embeddings, allow_dangerous_deserialization=True
         )
-        self.llm = ChatOllama(model=generation_model, temperature=0, base_url=OLLAMA_BASE_URL)
         self.k = k
         self.rerank = rerank
 

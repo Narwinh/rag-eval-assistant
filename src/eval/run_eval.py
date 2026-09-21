@@ -102,9 +102,11 @@ def main():
     parser = argparse.ArgumentParser(description="Run the eval set through the RAG pipeline.")
     parser.add_argument("--config-name", default="baseline", help="Label for this run, used in the output filename and stored config.")
     parser.add_argument("--eval-set", type=Path, default=EVAL_SET_PATH)
-    parser.add_argument("--index-dir", type=Path, default=INDEX_DIR)
-    parser.add_argument("--embedding-model", default=EMBEDDING_MODEL)
-    parser.add_argument("--generation-model", default=GENERATION_MODEL)
+    parser.add_argument("--index-dir", type=Path, default=None, help="Default depends on --backend.")
+    parser.add_argument("--embedding-model", default=None, help="Default depends on --backend.")
+    parser.add_argument("--generation-model", default=None, help="Default depends on --backend.")
+    parser.add_argument("--backend", choices=["local", "hosted"], default="local",
+                         help="'hosted' uses Gemini (needs GOOGLE_API_KEY) - see README 'Local vs. hosted'.")
     parser.add_argument("--k", type=int, default=DEFAULT_K)
     parser.add_argument("--rerank", action="store_true", help="Enable the BM25 re-ranking step.")
     parser.add_argument("--output", type=Path, default=None, help="Output path (default: results/<config-name>_results.json)")
@@ -115,18 +117,19 @@ def main():
 
     print(f"Loaded {len(eval_set)} eval questions from {args.eval_set}")
     print(
-        f"Config '{args.config_name}': index_dir={args.index_dir}, k={args.k}, "
+        f"Config '{args.config_name}': backend={args.backend}, index_dir={args.index_dir}, k={args.k}, "
         f"rerank={args.rerank}, generation_model={args.generation_model}, "
         f"embedding_model={args.embedding_model}, judge_model={JUDGE_MODEL}"
     )
 
-    pipeline = RagPipeline(
-        index_dir=args.index_dir,
-        embedding_model=args.embedding_model,
-        generation_model=args.generation_model,
-        k=args.k,
-        rerank=args.rerank,
-    )
+    pipeline_kwargs = {"k": args.k, "rerank": args.rerank, "backend": args.backend}
+    if args.index_dir:
+        pipeline_kwargs["index_dir"] = args.index_dir
+    if args.embedding_model:
+        pipeline_kwargs["embedding_model"] = args.embedding_model
+    if args.generation_model:
+        pipeline_kwargs["generation_model"] = args.generation_model
+    pipeline = RagPipeline(**pipeline_kwargs)
 
     scored = run_eval(pipeline, eval_set, k=args.k)
     scored["config"] = {

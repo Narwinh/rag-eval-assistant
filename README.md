@@ -2,7 +2,7 @@
 
 A retrieval-augmented Q&A assistant over ~300 pages of the official AWS Lambda Developer Guide, built to answer one question with evidence: **which design choices actually improve a RAG pipeline, and by how much?**
 
-**Live demo:** _TODO: Hugging Face Space link_
+**Live demo:** _TODO: Render URL, once deployed_ · **Run it yourself in one command:** see [Docker](#docker) below
 
 ## Results
 
@@ -46,13 +46,13 @@ AWS Lambda Developer Guide (PDF, 5 chapters / ~299 pages)
    FAISS index
         │  src/rag.py     (retrieve top-k, optional BM25 re-rank)
         ▼
-   llama3.2:3b (local, via Ollama)  →  answer + citations
+   llama3.2:3b via Ollama (local)  or  gemini-3.5-flash-lite (hosted)
         │
         ▼
-   src/serve.py (FastAPI /ask)  ──►  Docker  ──►  Hugging Face Space
+   src/serve.py (FastAPI /ask)  ──►  Docker (local)  /  Render (hosted demo)
 ```
 
-Evaluation runs the same pipeline through `src/eval/run_eval.py`, scoring each answer with `phi3:mini` as an independent LLM judge (deliberately a different model from the generator, to reduce self-preference bias).
+Evaluation runs the same pipeline through `src/eval/run_eval.py`, scoring each answer with `phi3:mini` as an independent LLM judge (deliberately a different model from the generator, to reduce self-preference bias). All eval numbers below are from the local Ollama backend — see "Local vs. hosted" for why the deployed demo differs.
 
 ### Why these choices
 
@@ -61,6 +61,14 @@ Evaluation runs the same pipeline through `src/eval/run_eval.py`, scoring each a
 - **Judge model — `phi3:mini`, not the generator**: using the same model to both generate and grade its own answers is a well-known source of inflated scores. A different (and differently-trained) small model is a cheap partial mitigation, not a full fix — see "What I'd improve."
 - **Vector store — FAISS**: local, no infrastructure, sufficient for ~230-370 chunks.
 - **Document set — AWS Lambda Developer Guide**: ties to the author's AWS certifications; the guide's own structure (concepts → configuration → scaling → permissions) gives natural easy/medium/hard question boundaries.
+
+### Local vs. hosted
+
+Everything above (development, the eval harness, all results in this README) runs against the **local** backend: Ollama, fully self-hosted, zero API cost. That's the "real" version of this project and the one `docker run` gives you.
+
+Hugging Face Spaces' Docker/Gradio tier now requires a paid plan (checked directly against their docs while building this — it used to be free), which doesn't fit a zero-cost portfolio project. Free serverless hosts (Render's free tier, etc.) don't have enough RAM to run a local LLM server, so the **hosted** demo swaps Ollama for Google Gemini's free-tier API (`gemini-3.5-flash-lite` for generation, `gemini-embedding-001` for embeddings — one provider for both, so the embedding space stays consistent) via `RAG_BACKEND=hosted`. Same retrieval logic, same prompts, same citation parsing — only the model client changes. See [`src/rag.py`](src/rag.py) for the full backend-selection code.
+
+This is a real trade-off, not a free upgrade: the hosted demo's answer quality hasn't been separately measured against the eval harness (see "What I'd improve"), and it depends on an external API being up, unlike the fully offline local path.
 
 ## Repo layout
 
@@ -79,7 +87,11 @@ data/
   processed/         # chunked JSON at each tested chunk size
   eval/eval_set.json
 results/              # baseline + ablation results (one JSON per config)
-Dockerfile / entrypoint.sh
+faiss_index/           # committed - production index (local backend, 500-tok chunks)
+faiss_index_hosted/    # committed - Gemini-embedded index for the hosted demo
+Dockerfile / entrypoint.sh    # self-contained image (bundles Ollama) - local use
+Dockerfile.hosted             # lightweight image (no Ollama) - Render deploy
+.env.example
 ```
 
 ## Running it locally
@@ -126,14 +138,28 @@ python -m src.eval.run_eval --config-name k6 --k 6
 python -m src.eval.run_eval --config-name rerank --rerank
 ```
 
-### Docker
+### Docker (local, self-contained)
 
 ```bash
 docker build -t lambda-docs-qa .
 docker run -p 8000:8000 lambda-docs-qa
 ```
 
-The image bundles Ollama itself and bakes in both models at build time, so the container needs no external Ollama server. _Note: `docker build`/`docker run` have not been verified on this machine (Docker wasn't installed in the dev environment) — verified instead by the equivalent Hugging Face Space build, which uses this same Dockerfile._
+The image bundles Ollama itself and bakes in both models at build time, so the container needs no external Ollama server or API key — this is the "clone and run" path. _Note: `docker build`/`docker run` have not been verified on this machine (Docker wasn't installed in the dev environment); the Dockerfile logic was verified step-by-step instead (base image, model-baking `RUN` step, entrypoint readiness check)._
+
+### Deploying the hosted demo (Render + Gemini free tier)
+
+1. Get a free key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
+2. Build the Gemini-backed index once (needs `GOOGLE_API_KEY` set in your own shell — never share or commit this key):
+   ```bash
+   pip install -r requirements.txt   # includes langchain-google-genai
+   export GOOGLE_API_KEY=...         # your own key, your own shell
+   python src/index.py --backend hosted
+   git add faiss_index_hosted/ && git commit -m "Add Gemini-backed index for hosted demo"
+   ```
+3. On [render.com](https://render.com), create a new **Web Service** from this GitHub repo, Docker runtime, Dockerfile path `Dockerfile.hosted`, free instance type.
+4. In the service's Environment settings, add `GOOGLE_API_KEY` as a secret (enter it directly in Render's dashboard, not here). `RAG_BACKEND=hosted` is already set by `Dockerfile.hosted`.
+5. Render auto-redeploys on every push to the connected branch.
 
 ## What I'd improve with more time
 
@@ -142,3 +168,4 @@ The image bundles Ollama itself and bakes in both models at build time, so the c
 - **Chunking**: fixed-size token chunking ignores document structure; header-aware or semantic chunking could reduce mid-sentence/mid-example splits.
 - **Generation model**: `llama3.2:3b` is small; several "hard" failures in the results are the model failing to synthesize across two retrieved chunks rather than a retrieval failure — worth separately measuring "retrieval succeeded but generation didn't use it."
 - **Broader corpus**: only 5 of the guide's ~30 chapters are ingested; extending to the full guide (with the same section-level metadata scheme) would test retrieval discrimination at a larger scale.
+- **Evaluate the hosted backend too**: `run_eval.py` currently only exercises `RAG_BACKEND=local`; running the same 38-question eval set against the Gemini-backed hosted pipeline would show whether the swapped-in API model changes answer quality (likely better, given it's a much larger model) and would make the local-vs-hosted trade-off in this README a measured one instead of an assumed one.
