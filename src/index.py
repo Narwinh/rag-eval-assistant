@@ -18,12 +18,20 @@ from pathlib import Path
 
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 CHUNKS_PATH = Path("data/processed/chunks.json")
 INDEX_DIR = Path("faiss_index")
 EMBEDDING_MODEL = "nomic-embed-text"
 HOSTED_INDEX_DIR = Path("faiss_index_hosted")
 HOSTED_EMBEDDING_MODEL = "models/gemini-embedding-001"
+
+# The Gemini free tier's embedding quota is much tighter than its generation
+# quota (undocumented exact numbers - not exposed without an AI Studio
+# login), so hosted-mode embedding is done in small batches with pauses and
+# retries, rather than one big FAISS.from_documents() call.
+HOSTED_BATCH_SIZE = 5
+HOSTED_PAUSE_SECONDS = 3.0
 
 
 def load_chunks(path: Path = CHUNKS_PATH) -> list[dict]:
@@ -39,6 +47,29 @@ def _get_embeddings(backend: str, embedding_model: str):
     from langchain_ollama import OllamaEmbeddings
 
     return OllamaEmbeddings(model=embedding_model)
+
+
+@retry(stop=stop_after_attempt(6), wait=wait_exponential(multiplier=2, min=5, max=60), reraise=True)
+def _embed_batch_with_retry(embeddings, batch: list[str]) -> list[list[float]]:
+    return embeddings.embed_documents(batch)
+
+
+def _build_hosted_index(docs: list[Document], embeddings) -> FAISS:
+    """Embed in small batches with pauses/retries to respect the Gemini free
+    tier's (undocumented, apparently tight) embedding rate limit."""
+    texts = [d.page_content for d in docs]
+    metadatas = [d.metadata for d in docs]
+    vectors: list[list[float]] = []
+
+    for i in range(0, len(texts), HOSTED_BATCH_SIZE):
+        batch = texts[i : i + HOSTED_BATCH_SIZE]
+        vectors.extend(_embed_batch_with_retry(embeddings, batch))
+        done = min(i + HOSTED_BATCH_SIZE, len(texts))
+        print(f"  embedded {done}/{len(texts)} chunks")
+        if done < len(texts):
+            time.sleep(HOSTED_PAUSE_SECONDS)
+
+    return FAISS.from_embeddings(list(zip(texts, vectors)), embeddings, metadatas=metadatas)
 
 
 def build_index(chunks: list[dict], embedding_model: str = EMBEDDING_MODEL, backend: str = "local") -> FAISS:
@@ -58,7 +89,10 @@ def build_index(chunks: list[dict], embedding_model: str = EMBEDDING_MODEL, back
     embeddings = _get_embeddings(backend, embedding_model)
     print(f"Embedding {len(docs)} chunks with '{embedding_model}' (backend={backend})...")
     start = time.time()
-    vectorstore = FAISS.from_documents(docs, embeddings)
+    if backend == "hosted":
+        vectorstore = _build_hosted_index(docs, embeddings)
+    else:
+        vectorstore = FAISS.from_documents(docs, embeddings)
     elapsed = time.time() - start
     print(f"Done in {elapsed:.1f}s ({elapsed / len(docs):.2f}s/chunk)")
     return vectorstore
