@@ -14,9 +14,13 @@ offset_map.txt
 *_run.log
 ablation_*.log
 
-# The production FAISS index (faiss_index/) IS committed - it's small
-# (~1.2MB) and the Dockerfile/HF Space build needs it without having to
-# run Ollama at build/deploy time. Only the ablation indices are ignored.
+# The production FAISS indices ARE committed for both backends - they're
+# small (~1.2MB each) and the Docker builds need them without having to
+# run Ollama/call Gemini at build/deploy time. Only the ablation indices
+# (faiss_index_300/, faiss_index_800/) stay ignored.
 !/faiss_index/
 !/faiss_index/*.faiss
 !/faiss_index/*.pkl
+!/faiss_index_hosted/
+!/faiss_index_hosted/*.faiss
+!/faiss_index_hosted/*.pkl
